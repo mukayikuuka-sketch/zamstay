@@ -1,0 +1,63 @@
+﻿<!-- Add this AFTER the existing stats grid in your owner-dashboard.html -->
+<div class="mt-8">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">Booking Management</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Upcoming Check-ins -->
+        <div class="bg-white p-6 rounded-xl shadow">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Upcoming Check-ins</p>
+                    <div class="text-2xl font-bold mt-2 text-blue-600">8</div>
+                    <p class="text-sm text-gray-500 mt-1">Next 7 days</p>
+                </div>
+                <div class="bg-blue-50 p-3 rounded-lg">
+                    <i class="fas fa-door-open text-blue-500 text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4">
+                <a href="/bookings/upcoming" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                    View All 
+                </a>
+            </div>
+        </div>
+        
+        <!-- Pending Bookings -->
+        <div class="bg-white p-6 rounded-xl shadow">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Pending Bookings</p>
+                    <div class="text-2xl font-bold mt-2 text-orange-600">3</div>
+                    <p class="text-sm text-gray-500 mt-1">Awaiting confirmation</p>
+                </div>
+                <div class="bg-orange-50 p-3 rounded-lg">
+                    <i class="fas fa-clock text-orange-500 text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4">
+                <a href="/bookings/pending" class="text-orange-600 hover:text-orange-800 text-sm font-medium">
+                    Review Now 
+                </a>
+            </div>
+        </div>
+        
+        <!-- Occupancy Rate -->
+        <div class="bg-white p-6 rounded-xl shadow">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Occupancy Rate</p>
+                    <div class="text-2xl font-bold mt-2 text-green-600">78%</div>
+                    <p class="text-sm text-gray-500 mt-1">This month</p>
+                </div>
+                <div class="bg-green-50 p-3 rounded-lg">
+                    <i class="fas fa-chart-line text-green-500 text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4">
+                <a href="/analytics/occupancy" class="text-green-600 hover:text-green-800 text-sm font-medium">
+                    View Details 
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

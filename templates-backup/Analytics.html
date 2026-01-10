@@ -1,0 +1,221 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - ZamReach</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .sidebar { background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%); }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar (copy from dashboard) -->
+        <div class="sidebar w-64 text-white p-6">
+            <div class="flex items-center mb-8">
+                <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
+                    <i class="fas fa-chart-network text-white"></i>
+                </div>
+                <h1 class="text-2xl font-bold">ZamReach</h1>
+            </div>
+            <p class="text-gray-400 mb-8 text-sm">Advanced Business Analytics</p>
+            
+                        <nav>
+                <h2 class="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-4">Home</h2>
+                <ul class="space-y-2">
+                    <li><a href="/" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-tachometer-alt mr-3"></i> Dashboard</a></li>
+                    <li><a href="/map/" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-map-marked-alt mr-3"></i> Map</a></li>
+                    <li><a href="/analytics/" class="flex items-center p-3 bg-gray-700 rounded-lg transition"><i class="fas fa-chart-line mr-3"></i> Analytics</a></li>
+                    <li><a href="/promotions/" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-bullhorn mr-3"></i> Promotions</a></li>
+                    <li><a href="/profile/" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-user-circle mr-3"></i> Profile</a></li>
+                </ul>
+            </nav>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto p-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Advanced Analytics</h1>
+            <p class="text-gray-600 mb-8">Detailed insights and performance metrics</p>
+            
+            <!-- Date Range Selector -->
+            <div class="bg-white p-6 rounded-xl shadow mb-8">
+                <div class="flex flex-wrap items-center gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
+                        <select class="border border-gray-300 rounded-lg px-4 py-2">
+                            <option>Last 7 days</option>
+                            <option selected>Last 30 days</option>
+                            <option>Last 90 days</option>
+                            <option>Last year</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">From</label>
+                        <input type="date" class="border border-gray-300 rounded-lg px-4 py-2" value="2026-01-01">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">To</label>
+                        <input type="date" class="border border-gray-300 rounded-lg px-4 py-2" value="2026-01-07">
+                    </div>
+                    <button class="mt-6 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        <i class="fas fa-filter mr-2"></i>Apply Filter
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Charts Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Revenue Chart -->
+                <div class="bg-white p-6 rounded-xl shadow">
+                    <h3 class="text-lg font-bold mb-4">Revenue Trend</h3>
+                    <canvas id="revenueChart" height="250"></canvas>
+                </div>
+                
+                <!-- Customer Growth -->
+                <div class="bg-white p-6 rounded-xl shadow">
+                    <h3 class="text-lg font-bold mb-4">Customer Growth</h3>
+                    <canvas id="customerChart" height="250"></canvas>
+                </div>
+                
+                <!-- Promotion Performance -->
+                <div class="bg-white p-6 rounded-xl shadow">
+                    <h3 class="text-lg font-bold mb-4">Promotion Performance</h3>
+                    <canvas id="promotionChart" height="250"></canvas>
+                </div>
+                
+                <!-- Geographic Distribution -->
+                <div class="bg-white p-6 rounded-xl shadow">
+                    <h3 class="text-lg font-bold mb-4">Geographic Distribution</h3>
+                    <canvas id="geoChart" height="250"></canvas>
+                </div>
+            </div>
+            
+            <!-- Key Metrics -->
+            <div class="bg-white p-6 rounded-xl shadow">
+                <h3 class="text-lg font-bold mb-4">Key Performance Indicators</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="text-center p-4 border border-gray-200 rounded-lg">
+                        <div class="text-2xl font-bold text-blue-600">4.8%</div>
+                        <div class="text-gray-600">Conversion Rate</div>
+                    </div>
+                    <div class="text-center p-4 border border-gray-200 rounded-lg">
+                        <div class="text-2xl font-bold text-green-600">$124.50</div>
+                        <div class="text-gray-600">Average Order Value</div>
+                    </div>
+                    <div class="text-center p-4 border border-gray-200 rounded-lg">
+                        <div class="text-2xl font-bold text-purple-600">18.2%</div>
+                        <div class="text-gray-600">Customer Retention</div>
+                    </div>
+                    <div class="text-center p-4 border border-gray-200 rounded-lg">
+                        <div class="text-2xl font-bold text-yellow-600">3.2 min</div>
+                        <div class="text-gray-600">Avg Session Duration</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize Charts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Revenue Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                    datasets: [{
+                        label: 'Revenue ($)',
+                        data: [32000, 38000, 42000, 45230, 48000, 52000, 55000],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+            
+            // Customer Chart
+            const customerCtx = document.getElementById('customerChart').getContext('2d');
+            new Chart(customerCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'New Customers',
+                        data: [210, 240, 280, 310, 340, 380],
+                        backgroundColor: '#10b981'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+            
+            // Promotion Chart
+            const promotionCtx = document.getElementById('promotionChart').getContext('2d');
+            new Chart(promotionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Email', 'Social Media', 'SMS', 'In-Store'],
+                    datasets: [{
+                        data: [35, 25, 20, 20],
+                        backgroundColor: ['#667eea', '#10b981', '#f59e0b', '#ef4444']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+            
+            // Geo Chart
+            const geoCtx = document.getElementById('geoChart').getContext('2d');
+            new Chart(geoCtx, {
+                type: 'polarArea',
+                data: {
+                    labels: ['Lusaka', 'Ndola', 'Kitwe', 'Livingstone', 'Kabwe'],
+                    datasets: [{
+                        data: [1250, 850, 420, 320, 280],
+                        backgroundColor: [
+                            'rgba(102, 126, 234, 0.7)',
+                            'rgba(16, 185, 129, 0.7)',
+                            'rgba(245, 158, 11, 0.7)',
+                            'rgba(239, 68, 68, 0.7)',
+                            'rgba(139, 92, 246, 0.7)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        });
+        
+        // Filter button
+        document.querySelector('button').addEventListener('click', function() {
+            alert('Analytics filters applied! Charts would update with new data.');
+        });
+    </script>
+</body>
+</html>
+
+

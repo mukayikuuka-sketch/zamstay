@@ -1,0 +1,117 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.models import User
+from .models import Property, Booking, Review
+
+# ==================== CUSTOMER PAGES (REDESIGN) ====================
+
+def home(request):
+    """Home page - using zamstay redesign"""
+    return render(request, 'home.html')
+
+def property_search(request):
+    """Property search - using redesign"""
+    return render(request, 'search.html')
+
+def property_detail(request, property_id):
+    """Property detail page"""
+    return render(request, 'property-detail.html', {'property_id': property_id})
+
+@login_required
+def customer_dashboard(request):
+    """Customer dashboard - using guest portal redesign"""
+    return render(request, 'guest-portal.html', {'user': request.user})
+
+# ==================== AUTHENTICATION ====================
+
+def signup_view(request):
+    """User registration"""
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('home')
+    else:
+        form = UserCreationForm()
+    return render(request, 'signup.html', {'form': form})
+
+def login_view(request):
+    """User login"""
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('home')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'login.html', {'form': form})
+
+def logout_view(request):
+    """User logout"""
+    logout(request)
+    return redirect('home')
+
+# ==================== OWNER PAGES ====================
+
+@login_required
+def owner_dashboard(request):
+    """Owner dashboard"""
+    return render(request, 'owner/dashboard.html', {'user': request.user})
+
+def owner_properties(request):
+    """Owner properties"""
+    return render(request, 'owner/properties.html')
+
+def add_property(request):
+    """Add property"""
+    return render(request, 'owner/add_property.html')
+
+def owner_bookings(request):
+    """Owner bookings"""
+    return render(request, 'owner/bookings.html')
+
+# ==================== ADMIN PAGES ====================
+
+@login_required
+def admin_dashboard(request):
+    """Admin dashboard"""
+    if not request.user.is_superuser:
+        return redirect('owner_dashboard')
+    return render(request, 'admin/dashboard.html')
+
+def admin_users(request):
+    """Admin users"""
+    return render(request, 'admin/users.html')
+
+def admin_properties(request):
+    """Admin properties"""
+    return render(request, 'admin/properties.html')
+
+# ==================== OTHER PAGES ====================
+
+def demo_dashboard(request):
+    """Demo dashboard"""
+    return render(request, 'owner-dashboard.html')
+
+def my_bookings(request):
+    """My bookings"""
+    return render(request, 'customer/my_bookings.html')
+
+def create_booking(request, property_id):
+    """Create booking"""
+    return render(request, 'customer/create_booking.html', {'property_id': property_id})
+
+def has_role(user, role_name):
+    """Check if user has role"""
+    try:
+        return user.userprofile.role == role_name
+    except:
+        return False
+

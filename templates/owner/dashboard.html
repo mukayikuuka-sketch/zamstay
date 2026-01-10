@@ -1,0 +1,218 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Dashboard - ZamStay</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50" data-role="owner">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-8">
+                    <a href="/owner/dashboard/" class="text-2xl font-bold text-blue-600">ZamStay Owner</a>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="/owner/dashboard/" class="text-blue-600 font-medium">
+                            <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                        </a>
+                        <a href="/owner/properties/" class="text-gray-700 hover:text-blue-600 font-medium">
+                            <i class="fas fa-home mr-2"></i>Properties
+                        </a>
+                        <a href="/owner/bookings/" class="text-gray-700 hover:text-blue-600 font-medium">
+                            <i class="fas fa-calendar mr-2"></i>Bookings
+                        </a>
+                        <a href="/owner/calendar/" class="text-gray-700 hover:text-blue-600 font-medium">
+                            <i class="fas fa-calendar-alt mr-2"></i>Calendar
+                        </a>
+                        <a href="/owner/finances/" class="text-gray-700 hover:text-blue-600 font-medium">
+                            <i class="fas fa-chart-line mr-2"></i>Finances
+                        </a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                        <i class="fas fa-plus mr-2"></i>Add Property
+                    </button>
+                    <div class="relative">
+                        <button id="user-menu" class="flex items-center space-x-2">
+                            <i class="fas fa-user-circle text-2xl text-gray-600"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Owner Dashboard</h1>
+            <p class="text-gray-600">Manage your properties and bookings</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Total Revenue</p>
+                        <div class="text-3xl font-bold mt-2 text-green-600">${{ total_revenue|default:"0" }}</div>
+                        <p class="text-sm text-gray-500 mt-1">All time</p>
+                    </div>
+                    <div class="bg-green-50 p-3 rounded-lg">
+                        <i class="fas fa-dollar-sign text-green-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Active Properties</p>
+                        <div class="text-3xl font-bold mt-2 text-blue-600">{{ properties.count }}</div>
+                        <p class="text-sm text-gray-500 mt-1">Available for booking</p>
+                    </div>
+                    <div class="bg-blue-50 p-3 rounded-lg">
+                        <i class="fas fa-home text-blue-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Active Bookings</p>
+                        <div class="text-3xl font-bold mt-2 text-purple-600">{{ active_bookings|default:"0" }}</div>
+                        <p class="text-sm text-gray-500 mt-1">Confirmed stays</p>
+                    </div>
+                    <div class="bg-purple-50 p-3 rounded-lg">
+                        <i class="fas fa-calendar-check text-purple-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Pending Bookings</p>
+                        <div class="text-3xl font-bold mt-2 text-orange-600">{{ pending_bookings|default:"0" }}</div>
+                        <p class="text-sm text-gray-500 mt-1">Awaiting confirmation</p>
+                    </div>
+                    <div class="bg-orange-50 p-3 rounded-lg">
+                        <i class="fas fa-clock text-orange-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Properties Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="bg-white rounded-xl shadow">
+                <div class="p-6 border-b">
+                    <h2 class="text-xl font-bold">Your Properties</h2>
+                </div>
+                <div class="p-6">
+                    {% if properties %}
+                    <div class="space-y-4">
+                        {% for property in properties %}
+                        <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                            <div>
+                                <h3 class="font-medium">{{ property.name }}</h3>
+                                <p class="text-sm text-gray-500">{{ property.location }}</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-bold text-green-600">${{ property.price_per_night }}/night</div>
+                                <span class="text-xs px-2 py-1 rounded-full {{ property.is_active|yesno:'bg-green-100 text-green-800,bg-red-100 text-red-800' }}">
+                                    {{ property.is_active|yesno:"Active,Inactive" }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-8">
+                        <i class="fas fa-home text-4xl text-gray-300 mb-4"></i>
+                        <h3 class="text-lg font-medium text-gray-700">No Properties Yet</h3>
+                        <p class="text-gray-500 mt-2">Start by adding your first property</p>
+                        <a href="/owner/property/add/" class="inline-block mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                            <i class="fas fa-plus mr-2"></i>Add Property
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow">
+                <div class="p-6 border-b">
+                    <h2 class="text-xl font-bold">Quick Actions</h2>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 gap-4">
+                        <a href="/owner/property/add/" class="flex items-center p-4 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100">
+                            <i class="fas fa-plus-circle text-xl mr-4"></i>
+                            <div>
+                                <h3 class="font-medium">Add New Property</h3>
+                                <p class="text-sm">List your hotel or lodge</p>
+                            </div>
+                        </a>
+                        <a href="/owner/bookings/" class="flex items-center p-4 bg-green-50 text-green-700 rounded-lg hover:bg-green-100">
+                            <i class="fas fa-calendar-alt text-xl mr-4"></i>
+                            <div>
+                                <h3 class="font-medium">Manage Bookings</h3>
+                                <p class="text-sm">View and confirm bookings</p>
+                            </div>
+                        </a>
+                        <a href="/owner/calendar/" class="flex items-center p-4 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100">
+                            <i class="fas fa-calendar text-xl mr-4"></i>
+                            <div>
+                                <h3 class="font-medium">View Calendar</h3>
+                                <p class="text-sm">Check availability</p>
+                            </div>
+                        </a>
+                        <a href="/owner/finances/" class="flex items-center p-4 bg-orange-50 text-orange-700 rounded-lg hover:bg-orange-100">
+                            <i class="fas fa-chart-line text-xl mr-4"></i>
+                            <div>
+                                <h3 class="font-medium">Financial Reports</h3>
+                                <p class="text-sm">View earnings and reports</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Role Switcher -->
+    <div class="fixed bottom-4 right-4 bg-white p-4 rounded-lg shadow-lg z-50">
+        <h4 class="font-bold mb-2">Test User Roles:</h4>
+        <div class="space-y-2">
+            <button onclick="switchRole('customer')" class="block w-full text-left px-3 py-2 bg-blue-100 hover:bg-blue-200 rounded">
+                 Customer View
+            </button>
+            <button onclick="switchRole('owner')" class="block w-full text-left px-3 py-2 bg-green-100 hover:bg-green-200 rounded">
+                 Owner View
+            </button>
+            <button onclick="switchRole('admin')" class="block w-full text-left px-3 py-2 bg-purple-100 hover:bg-purple-200 rounded">
+                 Admin View
+            </button>
+        </div>
+    </div>
+
+    <script>
+    function switchRole(role) {
+        localStorage.setItem('userRole', role);
+        document.body.setAttribute('data-role', role);
+        alert(`Switched to ${role} view. Refresh to see navigation changes.`);
+    }
+    
+    // Set initial role
+    document.addEventListener('DOMContentLoaded', function() {
+        const userRole = localStorage.getItem('userRole') || 'owner';
+        document.body.setAttribute('data-role', userRole);
+    });
+    </script>
+</body>
+</html>

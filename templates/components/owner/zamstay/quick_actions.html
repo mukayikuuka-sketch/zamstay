@@ -1,0 +1,36 @@
+﻿<!-- components/owner/zamstay/quick_actions.html -->
+<div class="zamstay-quick-actions">
+    <h3 style="margin-bottom: 15px; color: #2c3e50; display: flex; align-items: center; gap: 10px;">
+        <i class="fas fa-bolt" style="color: #f39c12;"></i>
+        ZamStay Quick Actions
+    </h3>
+    
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+        <a href="/zamstay/add-property/" class="action-btn" style="background: white; border: 1px solid #3498db; color: #3498db; padding: 10px; border-radius: 8px; text-decoration: none; text-align: center; transition: all 0.3s;">
+            <i class="fas fa-plus-circle" style="display: block; font-size: 20px; margin-bottom: 5px;"></i>
+            <div style="font-size: 12px; font-weight: 600;">Add Property</div>
+        </a>
+        
+        <a href="/zamstay/bookings/" class="action-btn" style="background: white; border: 1px solid #27ae60; color: #27ae60; padding: 10px; border-radius: 8px; text-decoration: none; text-align: center; transition: all 0.3s;">
+            <i class="fas fa-calendar-check" style="display: block; font-size: 20px; margin-bottom: 5px;"></i>
+            <div style="font-size: 12px; font-weight: 600;">Manage Bookings</div>
+        </a>
+        
+        <a href="/zamstay/reports/" class="action-btn" style="background: white; border: 1px solid #9b59b6; color: #9b59b6; padding: 10px; border-radius: 8px; text-decoration: none; text-align: center; transition: all 0.3s;">
+            <i class="fas fa-chart-bar" style="display: block; font-size: 20px; margin-bottom: 5px;"></i>
+            <div style="font-size: 12px; font-weight: 600;">View Reports</div>
+        </a>
+        
+        <a href="/zamstay/customer-service/" class="action-btn" style="background: white; border: 1px solid #e74c3c; color: #e74c3c; padding: 10px; border-radius: 8px; text-decoration: none; text-align: center; transition: all 0.3s;">
+            <i class="fas fa-headset" style="display: block; font-size: 20px; margin-bottom: 5px;"></i>
+            <div style="font-size: 12px; font-weight: 600;">Customer Service</div>
+        </a>
+    </div>
+</div>
+
+<style>
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+</style>

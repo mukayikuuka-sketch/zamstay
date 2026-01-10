@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZamStay - Book Hotels & Lodges in Zambia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .category-active {
+            background-color: #2563eb !important;
+            color: white !important;
+        }
+        .property-card.hidden {
+            display: none !important;
+        }
+        .search-box {
+            transform: translateY(50px);
+            margin-top: -50px;
+        }
+        .amenity-tag {
+            transition: all 0.2s ease;
+        }
+        .amenity-tag:hover {
+            transform: translateY(-2px);
+        }
+        .property-image {
+            transition: transform 0.5s ease;
+        }
+        .property-card:hover .property-image {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="text-2xl font-bold text-blue-600">ZamStay</a>
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="text-blue-600 font-bold">Home</a>
+                    <a href="/search/" class="text-gray-700 hover:text-blue-600">
+                        <i class="fas fa-search mr-1"></i>Browse All
+                    </a>
+                    <a href="/my-bookings" class="text-gray-700 hover:text-blue-600">
+                        <i class="fas fa-calendar mr-1"></i>My Bookings
+                    </a>
+                    <a href="/login" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">     
+                        <i class="fas fa-sign-in-alt mr-2"></i>Sign In
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white pt-16 pb-32">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Find Your Perfect Stay in Zambia</h1>
+            <p class="text-xl mb-8">Book apartments, hotels, and lodges across Zambia with instant confirmation</p>
+        </div>
+    </div>
+
+    <!-- Search Box -->
+    <div class="container mx-auto px-4">
+        <div class="search-box bg-white rounded-xl shadow-2xl p-6 max-w-4xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Destination</label>
+                    <input type="text" 
+                           placeholder="Where in Zambia?"
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Check-in / Check-out</label>
+                    <input type="text" 
+                           placeholder="Select dates"
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Guests</label>
+                    <select class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option>1 guest</option>
+                        <option>2 guests</option>
+                        <option>3 guests</option>
+                        <option>4+ guests</option>
+                    </select>
+                </div>
+            </div>
+            <button class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:from-green-600 hover:to-green-700 transition">
+                <i class="fas fa-search mr-2"></i>Search Stays
+            </button>
+        </div>
+    </div>
+
+    <!-- Category Filter Section -->
+    <div class="container mx-auto px-4 py-16">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                <i class="fas fa-filter text-blue-500 mr-2"></i>Browse by Property Type
+            </h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                Click on a category to filter properties below
+            </p>
+        </div>
+
+        <!-- Category Buttons -->
+        <div class="flex flex-wrap justify-center gap-4 mb-12">
+            <button id="filter-all" class="category-btn px-6 py-3 rounded-lg font-bold bg-blue-600 text-white hover:bg-blue-700">
+                <i class="fas fa-th-large mr-2"></i>All Properties
+            </button>
+            <button id="filter-apartments" class="category-btn px-6 py-3 rounded-lg font-bold bg-gray-100 text-gray-800 hover:bg-gray-200">
+                <i class="fas fa-building mr-2"></i>Apartments
+            </button>
+            <button id="filter-hotels" class="category-btn px-6 py-3 rounded-lg font-bold bg-gray-100 text-gray-800 hover:bg-gray-200">
+                <i class="fas fa-hotel mr-2"></i>Hotels
+            </button>
+            <button id="filter-lodges" class="category-btn px-6 py-3 rounded-lg font-bold bg-gray-100 text-gray-800 hover:bg-gray-200">
+                <i class="fas fa-campground mr-2"></i>Lodges
+            </button>
+        </div>
+
+        <!-- Property Count -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center bg-blue-100 text-blue-800 px-6 py-3 rounded-full">
+                <i class="fas fa-home text-xl mr-3"></i>
+                <span class="text-2xl font-bold mr-2" id="property-count">3</span>
+                <span class="text-lg">properties available</span>
+                <span id="active-filter" class="ml-3 text-blue-600 font-medium"></span>
+            </div>
+        </div>
+
+        <!-- Property Listing - MERGED FROM SEARCH PAGE -->
+        <div id="property-list" class="space-y-8 max-w-6xl mx-auto">
+            <!-- Apartment Card -->
+            <div class="property-card bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200" 
+                 data-category="apartment">
+                <div class="md:flex">
+                    <!-- Image with Price Overlay -->
+                    <div class="md:w-2/5 relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=500&fit=crop" 
+                             alt="Modern Apartment"
+                             class="property-image w-full h-64 md:h-full object-cover">
+                        <div class="absolute top-4 left-4 bg-green-500 text-white text-sm font-bold px-3 py-1 rounded-full">
+                            <i class="fas fa-building mr-1"></i>Apartment
+                        </div>
+                        <div class="absolute bottom-4 right-4 bg-white/90 px-4 py-2 rounded-lg shadow">
+                            <div class="text-2xl font-bold text-gray-800">$89<span class="text-sm text-gray-600">/night</span></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Property Details -->
+                    <div class="md:w-3/5 p-6">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Modern Lusaka Apartment</h3>
+                        <p class="text-gray-600 mb-4">
+                            <i class="fas fa-map-marker-alt text-red-500 mr-2"></i>
+                            Lusaka CBD, Zambia • 2 guests • 1 bedroom
+                        </p>
+                        
+                        <!-- Dynamic Amenities -->
+                        <div class="mb-6">
+                            <h4 class="font-semibold text-gray-700 mb-3">Apartment Amenities:</h4>
+                            <div class="flex flex-wrap gap-3">
+                                <span class="amenity-tag inline-flex items-center px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm">
+                                    <i class="fas fa-utensils mr-2"></i>Kitchen
+                                </span>
+                                <span class="amenity-tag inline-flex items-center px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm">
+                                    <i class="fas fa-washing-machine mr-2"></i>Laundry
+                                </span>
+                                <span class="amenity-tag inline-flex items-center px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm">
+                                    <i class="fas fa-car mr-2"></i>Parking
+                                </span>
+                                <span class="amenity-tag inline-flex items-center px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm">
+                                    <i class="fas fa-wifi mr-2"></i>WiFi
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Local Attractions -->
+                        <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                            <h4 class="font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-landmark text-purple-500 mr-2"></i>Nearby Attractions
+                            </h4>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="text-sm text-gray-600">
+                                    <i class="fas fa-shopping-cart text-purple-500 mr-2"></i>
+                                    Manda Hill Mall (2.1km)
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    <i class="fas fa-utensils text-orange-500 mr-2"></i>
+                                    Restaurants (0.5km)
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Book Now Button -->
+                        <button class="book-btn w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-lg font-bold hover:from-green-600 hover:to-green-700 transition">
+                            <i class="fas fa-calendar-check mr-2"></i>Book This Apartment Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hotel Card -->
+            <div class="property-card bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200" 
+                 data-category="hotel">
+                <div class="md:flex">
+                    <!-- Image with Price Overlay -->
+                    <div class="md:w-2/5 relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=500&fit=crop" 
+                             alt="Luxury Hotel"
+                             class="property-image w-full h-64 md:h-full object-cover">
+                        <div class="absolute top-4 left-4 bg-purple-500 text-white text-sm font-bold px-3 py-1 rounded-full">
+                            <i class="fas fa-hotel mr-1"></i>Hotel
+                        </div>
+                        <div class="absolute bottom-4 right-4 bg-white/90 px-4 py-2 rounded-lg shadow">
+                            <div class="text-2xl font-bold text-gray-800">$149<span class="text-sm text-gray-600">/night</span></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Property Details -->
+                    <div class="md:w-3/5 p-6">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Luxury Hotel Livingstone</h3>
+                        <p class="text-gray-600 mb-4">
+                            <i class="fas fa-map-marker-alt text-red-500 mr-2"></i>
+                            Near Victoria Falls, Zambia • 4 guests • 2 bedrooms
+                        </p>
+                        
+                        <!-- Dynamic Amenities -->
+                        <div class="mb-6">
+                            <h4 class="font-semibold text-gray-700 mb-3">Hotel Amenities:</h4>
+                            <div class="flex flex-wrap gap-3">
+                                <span class="amenity-tag inline-flex items-center px-3 py-1.5 bg-purple-100 text-purple-700 rounded-full text-sm">
+                                    <i class="fas fa-swimming-pool mr-2"></i>Pool & Spa
+                                </span>
+                                <span class="amenity-tag inline-flex items-center px-3 py-1.5 bg-purple-100 text-purple-700 rounded-full text-sm">
+                                    <i class="fas fa-utensils mr-2"></i>Restaurant
+                                </span>
+                                <span class="amenity-tag inline-flex items-center px-3 py-1.5 bg-purple-100 text-purple-700 rounded-full text-sm">
+                                    <i class="fas fa-concierge-bell mr-2"></i>24/7 Service
+                                </span>
+                                <span class="amenity-tag inline-flex items-center px-3 py-1.5 bg-purple-100 text-purple-700 rounded-full text-sm">
+                                    <i class="fas fa-dumbbell mr-2"></i>Gym
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Local Attractions -->
+                        <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                            <h4 class="font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-landmark text-purple-500 mr-2"></i>Nearby Attractions
+                            </h4>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="text-sm text-gray-600">
+                                    <i class="fas fa-water text-blue-500 mr-2"></i>
+                                    Victoria Falls (3km)
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    <i class="fas fa-shopping-bag text-yellow-500 mr-2"></i>
+                                    Curio Markets (1.2km)
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Book Now Button -->
+                        <button class="book-btn w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-lg font-bold hover:from-green-600 hover:to-green-700 transition">
+                            <i class="fas fa-calendar-check mr-2"></i>Book This Hotel Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lodge Card -->
+            <div class="property-card bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200" 
+                 data-category="lodge">
+                <div class="md:flex">
+                    <!-- Image with Price Overlay -->
+                    <div class="md:w-2/5 relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=800&h=500&fit=crop" 
+                             alt="Wildlife Lodge"
+                             class="property-image w-full h-64 md:h-full object-cover">
+                        <div class="absolute top-4 left-4 bg-yellow-600 text-white text-sm font-bold px-3 py-1 rounded-full">
+                            <i class="fas fa-campground mr-1"></i>Lodge
+                        </div>
+                        <div class="absolute bottom-4 right-4 bg-white/90 px-4 py-2 rounded-lg shadow">
+                            <div class="text-2xl font-bold text-gray-800">$125<span class="text-sm text-gray-600">/night</span></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Property Details -->
+                    <div class="md:w-3/5 p-6">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">South Luangwa Wildlife Lodge</h3>
+                        <p class="text-gray-600 mb-4">
+                            <i class="fas fa-map-marker-alt text-red-500 mr-2"></i>
+                            South Luangwa National Park, Zambia • 6 guests • 3 bedrooms
+                        </p>
+                        
+                        <!-- Dynamic Amenities -->
+                        <div class="mb-6">
+                            <h4 class="font-semibold text-gray-700 mb-3">Lodge Amenities:</h4>
+                            <div class="flex flex-wrap gap-3">
+                                <span class="amenity-tag inline-flex items-center px-3 py-1.5 bg-yellow-100 text-yellow-700 rounded-full text-sm">
+                                    <i class="fas fa-binoculars mr-2"></i>Game Drives
+                                </span>
+                                <span class="amenity-tag inline-flex items-center px-3 py-1.5 bg-yellow-100 text-yellow-700 rounded-full text-sm">
+                                    <i class="fas fa-campfire mr-2"></i>Campfire Area
+                                </span>
+                                <span class="amenity-tag inline-flex items-center px-3 py-1.5 bg-yellow-100 text-yellow-700 rounded-full text-sm">
+                                    <i class="fas fa-utensils mr-2"></i>Bush Dining
+                                </span>
+                                <span class="amenity-tag inline-flex items-center px-3 py-1.5 bg-yellow-100 text-yellow-700 rounded-full text-sm">
+                                    <i class="fas fa-hiking mr-2"></i>Nature Walks
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Local Attractions -->
+                        <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                            <h4 class="font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-landmark text-purple-500 mr-2"></i>Nearby Attractions
+                            </h4>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="text-sm text-gray-600">
+                                    <i class="fas fa-paw text-yellow-500 mr-2"></i>
+                                    Wildlife Viewing (in park)
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    <i class="fas fa-tree text-green-500 mr-2"></i>
+                                    Nature Trails (on site)
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Book Now Button -->
+                        <button class="book-btn w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-lg font-bold hover:from-green-600 hover:to-green-700 transition">
+                            <i class="fas fa-calendar-check mr-2"></i>Book This Lodge Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View All Button -->
+        <div class="text-center mt-12">
+            <a href="/search/" class="inline-flex items-center bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 transition">
+                <i class="fas fa-search mr-2"></i>View All Properties
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-2xl font-bold mb-4">ZamStay</h3>
+                    <p>Your gateway to amazing stays in Zambia.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Destinations</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-blue-300">Lusaka</a></li>
+                        <li><a href="#" class="hover:text-blue-300">Livingstone</a></li>
+                        <li><a href="#" class="hover:text-blue-300">South Luangwa</a></li>
+                        <li><a href="#" class="hover:text-blue-300">Lower Zambezi</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Property Types</h4>
+                    <ul class="space-y-2">
+                        <li><a href="/search/" class="hover:text-blue-300">Apartments</a></li>
+                        <li><a href="/search/" class="hover:text-blue-300">Hotels</a></li>
+                        <li><a href="/search/" class="hover:text-blue-300">Lodges</a></li>
+                        <li><a href="/search/" class="hover:text-blue-300">Safari Camps</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Contact</h4>
+                    <ul class="space-y-2">
+                        <li><i class="fas fa-phone mr-2"></i>+260 123 456 789</li>
+                        <li><i class="fas fa-envelope mr-2"></i>support@zamstay.co.zm</li>
+                        <li><i class="fas fa-map-marker-alt mr-2"></i>Lusaka, Zambia</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+                <p>&copy; 2024 ZamStay. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('.category-btn');
+            const propertyCards = document.querySelectorAll('.property-card');
+            const propertyCount = document.getElementById('property-count');
+            const activeFilter = document.getElementById('active-filter');
+            
+            // Initialize
+            updatePropertyCount('all');
+            
+            // Category filtering
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const filter = this.id.replace('filter-', '');
+                    
+                    // Update active button
+                    filterButtons.forEach(btn => {
+                        btn.classList.remove('category-active', 'bg-blue-600', 'text-white');
+                        btn.classList.add('bg-gray-100', 'text-gray-800');
+                    });
+                    
+                    this.classList.remove('bg-gray-100', 'text-gray-800');
+                    this.classList.add('category-active', 'bg-blue-600', 'text-white');
+                    
+                    // Filter properties
+                    let visibleCount = 0;
+                    propertyCards.forEach(card => {
+                        if (filter === 'all' || card.dataset.category === filter) {
+                            card.classList.remove('hidden');
+                            visibleCount++;
+                        } else {
+                            card.classList.add('hidden');
+                        }
+                    });
+                    
+                    // Update counts
+                    propertyCount.textContent = visibleCount;
+                    
+                    // Update filter text
+                    const filterTexts = {
+                        'all': 'Showing all properties',
+                        'apartment': 'Showing apartments only',
+                        'hotel': 'Showing hotels only',
+                        'lodge': 'Showing lodges only'
+                    };
+                    activeFilter.textContent = filterTexts[filter] || '';
+                });
+            });
+            
+            // Book button functionality
+            document.querySelectorAll('.book-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const propertyName = this.closest('.property-card').querySelector('h3').textContent;
+                    alert(`🚀 Booking initiated for: ${propertyName}\n\nYou would be redirected to the booking form.`);
+                });
+            });
+            
+            // Search button functionality
+            document.querySelector('button:contains("Search Stays")').addEventListener('click', function() {
+                const location = document.querySelector('input[placeholder*="Where in Zambia"]').value;
+                alert(`Searching for stays in: ${location || "All of Zambia"}`);
+            });
+            
+            function updatePropertyCount(filter) {
+                const visibleCards = Array.from(propertyCards).filter(card => !card.classList.contains('hidden'));
+                propertyCount.textContent = visibleCards.length;
+            }
+        });
+    </script>
+</body>
+</html>

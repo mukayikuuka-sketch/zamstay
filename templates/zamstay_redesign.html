@@ -1,0 +1,30 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ZamStay Property Listings{% endblock %}
+
+{% block content %}
+<div style="text-align: center; padding: 50px;">
+    <h1>ZamStay Redesign Ready</h1>
+    <p>The redesign is working in: <strong>ZamStay-Redesign/index.html</strong></p>
+    <p>Copy the HTML/CSS/JS from there into your Django templates.</p>
+    
+    <!-- FIX: Include index.html in the URL -->
+    <a href="/static/zamstay-redesign/index.html" style="
+        display: inline-block;
+        padding: 12px 30px;
+        background: #4CAF50;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        margin-top: 20px;
+    ">
+        View Redesign
+    </a>
+    
+    <p style="margin-top: 30px; color: #666;">
+        <strong>Note:</strong> The link now points to <code>/static/zamstay-redesign/index.html</code>
+    </p>
+</div>
+{% endblock %}

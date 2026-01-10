@@ -1,0 +1,10 @@
+﻿from django.contrib import admin
+from django.urls import path, include
+from django.views.generic import RedirectView
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('bookings.urls')),  # Add this line
+    path('owner/', RedirectView.as_view(url='/owner/dashboard/')),  # Redirect to owner dashboard
+    # ... your existing URLs ...
+]

@@ -1,0 +1,956 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZamReach Dashboard</title>
+    <script src="https://cdn.tailwindcss.com">
+    // ===== DASHBOARD FUNCTIONALITY =====
+    
+    // 1. Sidebar Navigation
+    document.addEventListener('DOMContentLoaded', function() {
+        // Sidebar navigation
+        const navItems = document.querySelectorAll('nav a');
+        navItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                if (this.getAttribute('href') === '#') {
+                    e.preventDefault();
+                    navItems.forEach(i => i.classList.remove('bg-gray-700'));
+                    this.classList.add('bg-gray-700');
+                    
+                    // Show loading for clicked item
+                    const itemText = this.textContent.trim();
+                    showNotification(`Navigating to: ${itemText}`);
+                    
+                    // Simulate page load (in real app, this would navigate)
+                    setTimeout(() => {
+                        if (itemText === 'Dashboard') {
+                            showNotification('Dashboard loaded successfully!');
+                        } else if (itemText === 'Map') {
+                            window.location.href = '/map';
+                        } else if (itemText === 'Analytics') {
+                            showNotification('Analytics page coming soon!');
+                        } else if (itemText === 'Promotions') {
+                            showNotification('Promotions manager loading...');
+                        } else if (itemText === 'Profile') {
+                            showNotification('Profile settings opening...');
+                        }
+                    }, 500);
+                }
+            });
+        });
+        
+        // 2. Quick Action Buttons
+        document.querySelectorAll('.bg-white button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const action = this.parentElement.querySelector('h3').textContent;
+                if (action.includes('View Reports')) {
+                    showNotification('Opening detailed analytics reports...');
+                    simulateLoading(() => {
+                        showNotification('Reports generated successfully!');
+                    });
+                } else if (action.includes('Start Campaign')) {
+                    showNotification('Launching promotion campaign wizard...');
+                    simulateLoading(() => {
+                        showNotification('Campaign created! Check Promotions page.');
+                    });
+                } else if (action.includes('Open Map')) {
+                    window.location.href = '/map';
+                }
+            });
+        });
+        
+        // 3. Stats Cards Clickable
+        document.querySelectorAll('.stat-card, .bg-white.rounded-xl.shadow').forEach(card => {
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', function() {
+                const title = this.querySelector('.text-gray-200, .text-gray-600').textContent;
+                showNotification(`Viewing details for: ${title}`);
+                
+                // Add visual feedback
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 200);
+            });
+        });
+        
+        // 4. Recent Activities Clickable
+        document.querySelectorAll('.hover\\:bg-gray-50').forEach(activity => {
+            activity.addEventListener('click', function() {
+                const title = this.querySelector('.font-semibold').textContent;
+                const details = this.querySelector('.text-gray-600').textContent;
+                showNotification(`Activity: ${title}\n${details}`, 3000);
+            });
+        });
+        
+        // 5. "View All" link
+        const viewAllLink = document.querySelector('a[href="#"]:contains("View All")');
+        if (viewAllLink) {
+            viewAllLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                showNotification('Loading all recent activities...');
+                simulateLoading(() => {
+                    showNotification('Loaded 25 more activities!');
+                });
+            });
+        }
+        
+        // 6. Refresh button (add one if not exists)
+        addRefreshButton();
+        
+        // 7. Load real data from API
+        loadDashboardData();
+    });
+    
+    // ===== HELPER FUNCTIONS =====
+    
+    function showNotification(message, duration = 2000) {
+        // Remove existing notification
+        const existing = document.getElementById('dashboard-notification');
+        if (existing) existing.remove();
+        
+        // Create new notification
+        const notification = document.createElement('div');
+        notification.id = 'dashboard-notification';
+        notification.innerHTML = `
+            <div style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+                <div class="bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg flex items-center">
+                    <i class="fas fa-info-circle mr-3"></i>
+                    <span>${message}</span>
+                </div>
+            </div>
+        `;
+        
+        // Add styles
+        notification.querySelector('div').style.transition = 'all 0.3s ease';
+        
+        document.body.appendChild(notification);
+        
+        // Auto-remove after duration
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateY(-20px)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 300);
+            }
+        }, duration);
+    }
+    
+    function simulateLoading(callback) {
+        showNotification('Loading...', 1000);
+        setTimeout(callback, 1000);
+    }
+    
+    function addRefreshButton() {
+        // Add refresh button to header
+        const header = document.querySelector('.mb-10');
+        if (header) {
+            const refreshBtn = document.createElement('button');
+            refreshBtn.className = 'ml-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition';
+            refreshBtn.innerHTML = '<i class="fas fa-sync-alt mr-2"></i>Refresh Data';
+            refreshBtn.addEventListener('click', function() {
+                this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Refreshing...';
+                this.disabled = true;
+                
+                setTimeout(() => {
+                    loadDashboardData();
+                    this.innerHTML = '<i class="fas fa-sync-alt mr-2"></i>Refresh Data';
+                    this.disabled = false;
+                    showNotification('Dashboard data refreshed!');
+                }, 1500);
+            });
+            
+            header.appendChild(refreshBtn);
+        }
+    }
+    
+    async function loadDashboardData() {
+        try {
+            // Try to fetch from your API
+            const response = await fetch('/api/business/ads/?format=json');
+            if (response.ok) {
+                const data = await response.json();
+                updateStatsWithRealData(data);
+            }
+        } catch (error) {
+            console.log('Using sample data (API not available)');
+            // Use sample data
+            updateStatsWithSampleData();
+        }
+    }
+    
+    function updateStatsWithRealData(data) {
+        // Update stats with real data
+        const stats = {
+            totalCustomers: data.length * 100 || 1254,
+            monthlyRevenue: data.length * 4500 || 45230,
+            activePromotions: Math.floor(data.length / 2) || 24,
+            mapViews: data.length * 500 || 3456
+        };
+        
+        updateDashboardStats(stats);
+    }
+    
+    function updateStatsWithSampleData() {
+        // Sample data updates
+        const stats = {
+            totalCustomers: 1254 + Math.floor(Math.random() * 50),
+            monthlyRevenue: 45230 + Math.floor(Math.random() * 1000),
+            activePromotions: 24 + Math.floor(Math.random() * 5),
+            mapViews: 3456 + Math.floor(Math.random() * 200)
+        };
+        
+        updateDashboardStats(stats);
+    }
+    
+    function updateDashboardStats(stats) {
+        // Animate number updates
+        animateCounter('total-customers', stats.totalCustomers);
+        animateCounter('monthly-revenue', stats.monthlyRevenue, '
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .stat-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .sidebar { background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%); }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar w-64 text-white p-6">
+            <div class="flex items-center mb-8">
+                <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
+                    <i class="fas fa-chart-network text-white"></i>
+                </div>
+                <h1 class="text-2xl font-bold">ZamReach</h1>
+            </div>
+            <p class="text-gray-400 mb-8 text-sm">Manage your business analytics and promotions</p>
+            
+            <nav>
+                <h2 class="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-4">Home</h2>
+                <ul class="space-y-2">
+                    <li><a href="#" class="flex items-center p-3 bg-gray-700 rounded-lg"><i class="fas fa-tachometer-alt mr-3"></i> Dashboard</a></li>
+                    <li> <a href="/map" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-map-marked-alt mr-3"></i> Map</a></li>
+                    <li> <a href="/map" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-chart-line mr-3"></i> Analytics</a></li>
+                    <li> <a href="/map" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-bullhorn mr-3"></i> Promotions</a></li>
+                    <li> <a href="/map" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-user-circle mr-3"></i> Profile</a></li>
+                </ul>
+            </nav>
+            
+            <div class="mt-12 pt-8 border-t border-gray-700">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-gray-300"></i>
+                    </div>
+                    <div class="ml-3">
+                        <div class="font-semibold">Administrator</div>
+                        <div class="text-gray-400 text-sm">admin@zamreach.com</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <div class="p-8">
+                <!-- Header -->
+                <div class="mb-10">
+                    <h1 class="text-3xl font-bold text-gray-800">Welcome back, Admin!</h1>
+                    <p class="text-gray-600 mt-2">Here's what's happening with your business today.</p>
+                </div>
+                
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                    <div class="stat-card text-white p-6 rounded-xl shadow-lg transform hover:-translate-y-1 transition">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="text-2xl font-bold">1,254</div>
+                                <div class="text-gray-200 text-sm mt-1">Total Customers</div>
+                            </div>
+                            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-users text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-green-300 text-sm">
+                            <i class="fas fa-arrow-up mr-1"></i> 12% from last month
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="text-2xl font-bold text-green-600">$45,230</div>
+                                <div class="text-gray-600 text-sm mt-1">Monthly Revenue</div>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-dollar-sign text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-green-600 text-sm font-medium">
+                            <i class="fas fa-chart-line mr-1"></i> 18.5% increase
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="text-2xl font-bold text-blue-600">24</div>
+                                <div class="text-gray-600 text-sm mt-1">Active Promotions</div>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-bullhorn text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-blue-600 text-sm">
+                            <i class="fas fa-clock mr-1"></i> 3 ending soon
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="text-2xl font-bold text-purple-600">3,456</div>
+                                <div class="text-gray-600 text-sm mt-1">Map Views</div>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-map-marked-alt text-purple-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-purple-600 text-sm">
+                            <i class="fas fa-eye mr-1"></i> 245 today
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Activities -->
+                <div class="bg-white rounded-xl shadow p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-gray-800">Recent Activities</h2>
+                        <a href="#" class="text-purple-600 hover:text-purple-800 text-sm font-medium">View All</a>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- Activity 1 -->
+                        <div class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg transition group">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fas fa-user-plus text-green-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-gray-800">New customer registered</div>
+                                    <div class="text-gray-600 text-sm">John Doe • johndoe@example.com</div>
+                                </div>
+                            </div>
+                            <div class="text-gray-500 text-sm">
+                                <span class="inline-block px-3 py-1 bg-gray-100 rounded-full">10 min ago</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Activity 2 -->
+                        <div class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg transition group">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fas fa-bullhorn text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-gray-800">Promotion campaign launched</div>
+                                    <div class="text-gray-600 text-sm">Madeleine Tyson • "Summer Sale 2026"</div>
+                                </div>
+                            </div>
+                            <div class="text-gray-500 text-sm">
+                                <span class="inline-block px-3 py-1 bg-gray-100 rounded-full">25 min ago</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Activity 3 -->
+                        <div class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg transition group">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fas fa-map-marker-alt text-yellow-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-gray-800">New location added to map</div>
+                                    <div class="text-gray-600 text-sm">Lusaka Central • Copperbelt Region</div>
+                                </div>
+                            </div>
+                            <div class="text-gray-500 text-sm">
+                                <span class="inline-block px-3 py-1 bg-gray-100 rounded-full">1 hour ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-gradient-to-r from-cyan-500 to-blue-500 text-white p-6 rounded-xl">
+                        <h3 class="font-bold text-lg mb-3">Quick Analytics</h3>
+                        <p class="text-cyan-100 mb-4">View detailed reports and insights</p>
+                        <button class="bg-white text-cyan-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">View Reports</button>
+                    </div>
+                    <div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6 rounded-xl">
+                        <h3 class="font-bold text-lg mb-3">Create Promotion</h3>
+                        <p class="text-purple-100 mb-4">Launch a new marketing campaign</p>
+                        <button class="bg-white text-purple-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">Start Campaign</button>
+                    </div>
+                    <div class="bg-gradient-to-r from-green-500 to-emerald-500 text-white p-6 rounded-xl">
+                        <h3 class="font-bold text-lg mb-3">Map Overview</h3>
+                        <p class="text-green-100 mb-4">Explore geographic analytics</p>
+                        <button class="bg-white text-green-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">Open Map</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Simple interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update time indicators
+            function updateTimes() {
+                const times = document.querySelectorAll('.text-gray-500 span');
+                times.forEach(time => {
+                    // This is just for demo - in real app you'd use actual timestamps
+                    console.log('Time indicators would update here');
+                });
+            }
+            
+            // Sidebar navigation
+            const navItems = document.querySelectorAll('nav a');
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navItems.forEach(i => i.classList.remove('bg-gray-700'));
+                    this.classList.add('bg-gray-700');
+                    alert('Navigating to: ' + this.textContent.trim());
+                });
+            });
+            
+            // Quick action buttons
+            document.querySelectorAll('.bg-white button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const action = this.parentElement.querySelector('h3').textContent;
+                    alert('Action: ' + action);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+);
+        animateCounter('active-promotions', stats.activePromotions);
+        animateCounter('map-views', stats.mapViews);
+    }
+    
+    function animateCounter(elementId, finalValue, prefix = '') {
+        const element = document.getElementById(elementId);
+        if (!element) return;
+        
+        const current = parseInt(element.textContent.replace(/[^0-9]/g, '')) || 0;
+        const increment = (finalValue - current) / 20;
+        let currentValue = current;
+        
+        const timer = setInterval(() => {
+            currentValue += increment;
+            if ((increment > 0 && currentValue >= finalValue) || 
+                (increment < 0 && currentValue <= finalValue)) {
+                currentValue = finalValue;
+                clearInterval(timer);
+            }
+            
+            element.textContent = prefix + Math.floor(currentValue).toLocaleString();
+        }, 50);
+    }
+    
+    // Initialize element IDs if they don't exist
+    setTimeout(() => {
+        const stats = document.querySelectorAll('.text-2xl.font-bold, .text-3xl.font-bold');
+        stats.forEach((stat, index) => {
+            if (!stat.id) {
+                const labels = ['total-customers', 'monthly-revenue', 'active-promotions', 'map-views'];
+                if (labels[index]) {
+                    stat.id = labels[index];
+                }
+            }
+        });
+    }, 100);
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .stat-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .sidebar { background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%); }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar w-64 text-white p-6">
+            <div class="flex items-center mb-8">
+                <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
+                    <i class="fas fa-chart-network text-white"></i>
+                </div>
+                <h1 class="text-2xl font-bold">ZamReach</h1>
+            </div>
+            <p class="text-gray-400 mb-8 text-sm">Manage your business analytics and promotions</p>
+            
+            <nav>
+                <h2 class="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-4">Home</h2>
+                <ul class="space-y-2">
+                    <li><a href="#" class="flex items-center p-3 bg-gray-700 rounded-lg"><i class="fas fa-tachometer-alt mr-3"></i> Dashboard</a></li>
+                    <li> <a href="/map" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-map-marked-alt mr-3"></i> Map</a></li>
+                    <li> <a href="/map" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-chart-line mr-3"></i> Analytics</a></li>
+                    <li> <a href="/map" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-bullhorn mr-3"></i> Promotions</a></li>
+                    <li> <a href="/map" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-user-circle mr-3"></i> Profile</a></li>
+                </ul>
+            </nav>
+            
+            <div class="mt-12 pt-8 border-t border-gray-700">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-gray-300"></i>
+                    </div>
+                    <div class="ml-3">
+                        <div class="font-semibold">Administrator</div>
+                        <div class="text-gray-400 text-sm">admin@zamreach.com</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <div class="p-8">
+                <!-- Header -->
+                <div class="mb-10">
+                    <h1 class="text-3xl font-bold text-gray-800">Welcome back, Admin!</h1>
+                    <p class="text-gray-600 mt-2">Here's what's happening with your business today.</p>
+                </div>
+                
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                    <div class="stat-card text-white p-6 rounded-xl shadow-lg transform hover:-translate-y-1 transition">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="text-2xl font-bold">1,254</div>
+                                <div class="text-gray-200 text-sm mt-1">Total Customers</div>
+                            </div>
+                            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-users text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-green-300 text-sm">
+                            <i class="fas fa-arrow-up mr-1"></i> 12% from last month
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="text-2xl font-bold text-green-600">$45,230</div>
+                                <div class="text-gray-600 text-sm mt-1">Monthly Revenue</div>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-dollar-sign text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-green-600 text-sm font-medium">
+                            <i class="fas fa-chart-line mr-1"></i> 18.5% increase
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="text-2xl font-bold text-blue-600">24</div>
+                                <div class="text-gray-600 text-sm mt-1">Active Promotions</div>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-bullhorn text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-blue-600 text-sm">
+                            <i class="fas fa-clock mr-1"></i> 3 ending soon
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="text-2xl font-bold text-purple-600">3,456</div>
+                                <div class="text-gray-600 text-sm mt-1">Map Views</div>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-map-marked-alt text-purple-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-purple-600 text-sm">
+                            <i class="fas fa-eye mr-1"></i> 245 today
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Activities -->
+                <div class="bg-white rounded-xl shadow p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-gray-800">Recent Activities</h2>
+                        <a href="#" class="text-purple-600 hover:text-purple-800 text-sm font-medium">View All</a>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- Activity 1 -->
+                        <div class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg transition group">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fas fa-user-plus text-green-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-gray-800">New customer registered</div>
+                                    <div class="text-gray-600 text-sm">John Doe • johndoe@example.com</div>
+                                </div>
+                            </div>
+                            <div class="text-gray-500 text-sm">
+                                <span class="inline-block px-3 py-1 bg-gray-100 rounded-full">10 min ago</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Activity 2 -->
+                        <div class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg transition group">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fas fa-bullhorn text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-gray-800">Promotion campaign launched</div>
+                                    <div class="text-gray-600 text-sm">Madeleine Tyson • "Summer Sale 2026"</div>
+                                </div>
+                            </div>
+                            <div class="text-gray-500 text-sm">
+                                <span class="inline-block px-3 py-1 bg-gray-100 rounded-full">25 min ago</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Activity 3 -->
+                        <div class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg transition group">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fas fa-map-marker-alt text-yellow-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-gray-800">New location added to map</div>
+                                    <div class="text-gray-600 text-sm">Lusaka Central • Copperbelt Region</div>
+                                </div>
+                            </div>
+                            <div class="text-gray-500 text-sm">
+                                <span class="inline-block px-3 py-1 bg-gray-100 rounded-full">1 hour ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-gradient-to-r from-cyan-500 to-blue-500 text-white p-6 rounded-xl">
+                        <h3 class="font-bold text-lg mb-3">Quick Analytics</h3>
+                        <p class="text-cyan-100 mb-4">View detailed reports and insights</p>
+                        <button class="bg-white text-cyan-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">View Reports</button>
+                    </div>
+                    <div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6 rounded-xl">
+                        <h3 class="font-bold text-lg mb-3">Create Promotion</h3>
+                        <p class="text-purple-100 mb-4">Launch a new marketing campaign</p>
+                        <button class="bg-white text-purple-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">Start Campaign</button>
+                    </div>
+                    <div class="bg-gradient-to-r from-green-500 to-emerald-500 text-white p-6 rounded-xl">
+                        <h3 class="font-bold text-lg mb-3">Map Overview</h3>
+                        <p class="text-green-100 mb-4">Explore geographic analytics</p>
+                        <button class="bg-white text-green-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">Open Map</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Simple interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update time indicators
+            function updateTimes() {
+                const times = document.querySelectorAll('.text-gray-500 span');
+                times.forEach(time => {
+                    // This is just for demo - in real app you'd use actual timestamps
+                    console.log('Time indicators would update here');
+                });
+            }
+            
+            // Sidebar navigation
+            const navItems = document.querySelectorAll('nav a');
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navItems.forEach(i => i.classList.remove('bg-gray-700'));
+                    this.classList.add('bg-gray-700');
+                    alert('Navigating to: ' + this.textContent.trim());
+                });
+            });
+            
+            // Quick action buttons
+            document.querySelectorAll('.bg-white button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const action = this.parentElement.querySelector('h3').textContent;
+                    alert('Action: ' + action);
+                });
+            });
+        });
+    
+    // ===== DASHBOARD FUNCTIONALITY =====
+    
+    // 1. Sidebar Navigation
+    document.addEventListener('DOMContentLoaded', function() {
+        // Sidebar navigation
+        const navItems = document.querySelectorAll('nav a');
+        navItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                if (this.getAttribute('href') === '#') {
+                    e.preventDefault();
+                    navItems.forEach(i => i.classList.remove('bg-gray-700'));
+                    this.classList.add('bg-gray-700');
+                    
+                    // Show loading for clicked item
+                    const itemText = this.textContent.trim();
+                    showNotification(`Navigating to: ${itemText}`);
+                    
+                    // Simulate page load (in real app, this would navigate)
+                    setTimeout(() => {
+                        if (itemText === 'Dashboard') {
+                            showNotification('Dashboard loaded successfully!');
+                        } else if (itemText === 'Map') {
+                            window.location.href = '/map';
+                        } else if (itemText === 'Analytics') {
+                            showNotification('Analytics page coming soon!');
+                        } else if (itemText === 'Promotions') {
+                            showNotification('Promotions manager loading...');
+                        } else if (itemText === 'Profile') {
+                            showNotification('Profile settings opening...');
+                        }
+                    }, 500);
+                }
+            });
+        });
+        
+        // 2. Quick Action Buttons
+        document.querySelectorAll('.bg-white button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const action = this.parentElement.querySelector('h3').textContent;
+                if (action.includes('View Reports')) {
+                    showNotification('Opening detailed analytics reports...');
+                    simulateLoading(() => {
+                        showNotification('Reports generated successfully!');
+                    });
+                } else if (action.includes('Start Campaign')) {
+                    showNotification('Launching promotion campaign wizard...');
+                    simulateLoading(() => {
+                        showNotification('Campaign created! Check Promotions page.');
+                    });
+                } else if (action.includes('Open Map')) {
+                    window.location.href = '/map';
+                }
+            });
+        });
+        
+        // 3. Stats Cards Clickable
+        document.querySelectorAll('.stat-card, .bg-white.rounded-xl.shadow').forEach(card => {
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', function() {
+                const title = this.querySelector('.text-gray-200, .text-gray-600').textContent;
+                showNotification(`Viewing details for: ${title}`);
+                
+                // Add visual feedback
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 200);
+            });
+        });
+        
+        // 4. Recent Activities Clickable
+        document.querySelectorAll('.hover\\:bg-gray-50').forEach(activity => {
+            activity.addEventListener('click', function() {
+                const title = this.querySelector('.font-semibold').textContent;
+                const details = this.querySelector('.text-gray-600').textContent;
+                showNotification(`Activity: ${title}\n${details}`, 3000);
+            });
+        });
+        
+        // 5. "View All" link
+        const viewAllLink = document.querySelector('a[href="#"]:contains("View All")');
+        if (viewAllLink) {
+            viewAllLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                showNotification('Loading all recent activities...');
+                simulateLoading(() => {
+                    showNotification('Loaded 25 more activities!');
+                });
+            });
+        }
+        
+        // 6. Refresh button (add one if not exists)
+        addRefreshButton();
+        
+        // 7. Load real data from API
+        loadDashboardData();
+    });
+    
+    // ===== HELPER FUNCTIONS =====
+    
+    function showNotification(message, duration = 2000) {
+        // Remove existing notification
+        const existing = document.getElementById('dashboard-notification');
+        if (existing) existing.remove();
+        
+        // Create new notification
+        const notification = document.createElement('div');
+        notification.id = 'dashboard-notification';
+        notification.innerHTML = `
+            <div style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+                <div class="bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg flex items-center">
+                    <i class="fas fa-info-circle mr-3"></i>
+                    <span>${message}</span>
+                </div>
+            </div>
+        `;
+        
+        // Add styles
+        notification.querySelector('div').style.transition = 'all 0.3s ease';
+        
+        document.body.appendChild(notification);
+        
+        // Auto-remove after duration
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateY(-20px)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 300);
+            }
+        }, duration);
+    }
+    
+    function simulateLoading(callback) {
+        showNotification('Loading...', 1000);
+        setTimeout(callback, 1000);
+    }
+    
+    function addRefreshButton() {
+        // Add refresh button to header
+        const header = document.querySelector('.mb-10');
+        if (header) {
+            const refreshBtn = document.createElement('button');
+            refreshBtn.className = 'ml-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition';
+            refreshBtn.innerHTML = '<i class="fas fa-sync-alt mr-2"></i>Refresh Data';
+            refreshBtn.addEventListener('click', function() {
+                this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Refreshing...';
+                this.disabled = true;
+                
+                setTimeout(() => {
+                    loadDashboardData();
+                    this.innerHTML = '<i class="fas fa-sync-alt mr-2"></i>Refresh Data';
+                    this.disabled = false;
+                    showNotification('Dashboard data refreshed!');
+                }, 1500);
+            });
+            
+            header.appendChild(refreshBtn);
+        }
+    }
+    
+    async function loadDashboardData() {
+        try {
+            // Try to fetch from your API
+            const response = await fetch('/api/business/ads/?format=json');
+            if (response.ok) {
+                const data = await response.json();
+                updateStatsWithRealData(data);
+            }
+        } catch (error) {
+            console.log('Using sample data (API not available)');
+            // Use sample data
+            updateStatsWithSampleData();
+        }
+    }
+    
+    function updateStatsWithRealData(data) {
+        // Update stats with real data
+        const stats = {
+            totalCustomers: data.length * 100 || 1254,
+            monthlyRevenue: data.length * 4500 || 45230,
+            activePromotions: Math.floor(data.length / 2) || 24,
+            mapViews: data.length * 500 || 3456
+        };
+        
+        updateDashboardStats(stats);
+    }
+    
+    function updateStatsWithSampleData() {
+        // Sample data updates
+        const stats = {
+            totalCustomers: 1254 + Math.floor(Math.random() * 50),
+            monthlyRevenue: 45230 + Math.floor(Math.random() * 1000),
+            activePromotions: 24 + Math.floor(Math.random() * 5),
+            mapViews: 3456 + Math.floor(Math.random() * 200)
+        };
+        
+        updateDashboardStats(stats);
+    }
+    
+    function updateDashboardStats(stats) {
+        // Animate number updates
+        animateCounter('total-customers', stats.totalCustomers);
+        animateCounter('monthly-revenue', stats.monthlyRevenue, '
+</body>
+</html>
+);
+        animateCounter('active-promotions', stats.activePromotions);
+        animateCounter('map-views', stats.mapViews);
+    }
+    
+    function animateCounter(elementId, finalValue, prefix = '') {
+        const element = document.getElementById(elementId);
+        if (!element) return;
+        
+        const current = parseInt(element.textContent.replace(/[^0-9]/g, '')) || 0;
+        const increment = (finalValue - current) / 20;
+        let currentValue = current;
+        
+        const timer = setInterval(() => {
+            currentValue += increment;
+            if ((increment > 0 && currentValue >= finalValue) || 
+                (increment < 0 && currentValue <= finalValue)) {
+                currentValue = finalValue;
+                clearInterval(timer);
+            }
+            
+            element.textContent = prefix + Math.floor(currentValue).toLocaleString();
+        }, 50);
+    }
+    
+    // Initialize element IDs if they don't exist
+    setTimeout(() => {
+        const stats = document.querySelectorAll('.text-2xl.font-bold, .text-3xl.font-bold');
+        stats.forEach((stat, index) => {
+            if (!stat.id) {
+                const labels = ['total-customers', 'monthly-revenue', 'active-promotions', 'map-views'];
+                if (labels[index]) {
+                    stat.id = labels[index];
+                }
+            }
+        });
+    }, 100);
+    </script>
+</body>
+</html>
+

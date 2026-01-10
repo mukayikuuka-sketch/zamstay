@@ -1,0 +1,323 @@
+﻿<!-- templates/integrated_dashboard.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Integrated Dashboard - ZamStay & Analytics{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eaeaea;
+    }
+    
+    .dashboard-title {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .dashboard-title h1 {
+        font-size: 28px;
+        color: #2c3e50;
+        margin: 0;
+    }
+    
+    .dashboard-title .zamstay-badge {
+        background: #3498db;
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+    
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 20px;
+    }
+    
+    @media (max-width: 1024px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .dashboard-section {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+    }
+    
+    .section-title {
+        font-size: 18px;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .section-title i {
+        color: #3498db;
+    }
+    
+    /* Tabs for switching between ZamStay and Analytics */
+    .dashboard-tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+    }
+    
+    .tab-btn {
+        padding: 10px 20px;
+        background: none;
+        border: none;
+        font-weight: 600;
+        color: #7f8c8d;
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s;
+    }
+    
+    .tab-btn.active {
+        color: #3498db;
+        border-bottom-color: #3498db;
+    }
+    
+    .tab-content {
+        display: none;
+    }
+    
+    .tab-content.active {
+        display: block;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="dashboard-title">
+            <h1>Owner Dashboard</h1>
+            <span class="zamstay-badge">ZamStay Integrated</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <a href="/guest/" class="btn" style="background: #3498db; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none;">
+                <i class="fas fa-external-link-alt"></i> View Guest Portal
+            </a>
+            <div style="display: flex; align-items: center; gap: 10px; padding: 10px 15px; background: #f8f9fa; border-radius: 8px;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: #3498db; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                    {{ user.username|first|upper }}
+                </div>
+                <div>
+                    <div style="font-weight: 600;">{{ user.username }}</div>
+                    <div style="font-size: 12px; color: #7f8c8d;">Property Owner</div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Tabs -->
+    <div class="dashboard-tabs">
+        <button class="tab-btn active" data-tab="overview">
+            <i class="fas fa-tachometer-alt"></i> Overview
+        </button>
+        <button class="tab-btn" data-tab="zamstay">
+            <i class="fas fa-home"></i> ZamStay Properties
+        </button>
+        <button class="tab-btn" data-tab="analytics">
+            <i class="fas fa-chart-line"></i> Analytics
+        </button>
+        <button class="tab-btn" data-tab="promotions">
+            <i class="fas fa-bullhorn"></i> Promotions
+        </button>
+        <button class="tab-btn" data-tab="support">
+            <i class="fas fa-headset"></i> Customer Support
+        </button>
+    </div>
+    
+    <!-- Tab Contents -->
+    <div id="overview" class="tab-content active">
+        <div class="dashboard-grid">
+            <!-- Left Column -->
+            <div>
+                <!-- ZamStay Quick Stats -->
+                <div class="dashboard-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-home"></i>
+                        ZamStay Property Management
+                    </h2>
+                    {% include 'components/owner/zamstay/property_stats.html' %}
+                </div>
+                
+                <!-- Your Existing Analytics -->
+                <div class="dashboard-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-chart-bar"></i>
+                        Business Analytics
+                    </h2>
+                    <!-- Your existing analytics content here -->
+                    <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                        <i class="fas fa-chart-line" style="font-size: 40px; color: #9b59b6; margin-bottom: 15px;"></i>
+                        <p>Your existing analytics charts and data will appear here</p>
+                    </div>
+                </div>
+                
+                <!-- Recent Activities -->
+                <div class="dashboard-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-history"></i>
+                        Recent Activities
+                    </h2>
+                    <!-- Your existing activity feed -->
+                    <div style="min-height: 200px; display: flex; align-items: center; justify-content: center; color: #7f8c8d;">
+                        Activity feed from both ZamStay and other systems
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column -->
+            <div>
+                <!-- Quick Actions -->
+                <div class="dashboard-section">
+                    {% include 'components/owner/zamstay/quick_actions.html' %}
+                </div>
+                
+                <!-- Recent Properties -->
+                <div class="dashboard-section">
+                    {% include 'components/owner/zamstay/recent_properties.html' %}
+                </div>
+                
+                <!-- Promotions -->
+                <div class="dashboard-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-bullhorn"></i>
+                        Active Promotions
+                    </h2>
+                    <!-- Your existing promotions -->
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107;">
+                        <div style="font-weight: 600; color: #856404;">Summer Special</div>
+                        <div style="font-size: 13px; color: #856404; margin-top: 5px;">20% off all bookings until Feb 28</div>
+                    </div>
+                </div>
+                
+                <!-- Customer Support -->
+                <div class="dashboard-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-headset"></i>
+                        Customer Support
+                    </h2>
+                    <!-- Your existing support widget -->
+                    <div style="text-align: center;">
+                        <div style="font-size: 12px; color: #7f8c8d; margin-bottom: 10px;">Open Tickets: 3</div>
+                        <a href="/support/" class="btn" style="background: #2c3e50; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; display: inline-block;">
+                            <i class="fas fa-comments"></i> View Support Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ZamStay Tab -->
+    <div id="zamstay" class="tab-content">
+        <div class="dashboard-section">
+            <h2 class="section-title">
+                <i class="fas fa-home"></i>
+                ZamStay Property Management
+            </h2>
+            <p>Full ZamStay property management interface will go here.</p>
+            <!-- Include full property management interface -->
+        </div>
+    </div>
+    
+    <!-- Analytics Tab -->
+    <div id="analytics" class="tab-content">
+        <div class="dashboard-section">
+            <h2 class="section-title">
+                <i class="fas fa-chart-line"></i>
+                Full Analytics Dashboard
+            </h2>
+            <p>Your complete analytics dashboard will appear here.</p>
+        </div>
+    </div>
+    
+    <!-- Promotions Tab -->
+    <div id="promotions" class="tab-content">
+        <div class="dashboard-section">
+            <h2 class="section-title">
+                <i class="fas fa-bullhorn"></i>
+                Promotions Management
+            </h2>
+            <p>Your promotions management interface will appear here.</p>
+        </div>
+    </div>
+    
+    <!-- Support Tab -->
+    <div id="support" class="tab-content">
+        <div class="dashboard-section">
+            <h2 class="section-title">
+                <i class="fas fa-headset"></i>
+                Customer Support Dashboard
+            </h2>
+            <p>Your customer support management interface will appear here.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Tab functionality
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        // Remove active class from all tabs and contents
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        // Add active class to clicked tab
+        this.classList.add('active');
+        
+        // Show corresponding content
+        const tabId = this.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
+    });
+});
+
+// ZamStay integration functions
+function loadZamStayProperties() {
+    // This would load ZamStay properties via AJAX
+    console.log('Loading ZamStay properties...');
+}
+
+function refreshZamStayStats() {
+    // This would refresh ZamStay statistics
+    console.log('Refreshing ZamStay stats...');
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadZamStayProperties();
+    
+    // Auto-refresh stats every 30 seconds
+    setInterval(refreshZamStayStats, 30000);
+});
+</script>
+{% endblock %}

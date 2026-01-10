@@ -1,0 +1,43 @@
+﻿<!-- components/zamstay/dashboard_card.html -->
+<div class="card zamstay-card" style="border-left: 4px solid #3498db;">
+    <div class="card-header" style="background: #f8f9fa; border-bottom: 1px solid rgba(52, 152, 219, 0.1);">
+        <h5 class="card-title mb-0" style="color: #2c3e50;">
+            <i class="fas fa-home me-2" style="color: #3498db;"></i>
+            ZamStay Properties
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="row text-center mb-3">
+            <div class="col-6">
+                <div class="h3 mb-1" style="color: #3498db;">12</div>
+                <div class="text-muted small">Properties</div>
+            </div>
+            <div class="col-6">
+                <div class="h3 mb-1" style="color: #27ae60;">8</div>
+                <div class="text-muted small">Active</div>
+            </div>
+        </div>
+        <a href="/guest/" class="btn btn-primary w-100 mb-2">
+            <i class="fas fa-external-link-alt me-2"></i>
+            View Guest Portal
+        </a>
+        <div class="d-grid gap-2">
+            <button class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-plus-circle me-1"></i> Add Property
+            </button>
+            <button class="btn btn-outline-success btn-sm">
+                <i class="fas fa-calendar-check me-1"></i> Manage Bookings
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+.zamstay-card {
+    transition: transform 0.2s;
+}
+.zamstay-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.1);
+}
+</style>

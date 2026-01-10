@@ -1,0 +1,95 @@
+﻿<!-- Update your navigation menu in owner-dashboard.html -->
+<nav class="bg-white shadow-lg">
+    <div class="container mx-auto px-4">
+        <div class="flex justify-between items-center h-16">
+            <div class="flex items-center space-x-8">
+                <!-- Logo -->
+                <a href="/" class="text-2xl font-bold text-blue-600">ZamStay</a>
+                
+                <!-- Role-based navigation -->
+                <div class="hidden md:flex space-x-6">
+                    <!-- Customer Navigation -->
+                    <a href="/search" class="text-gray-700 hover:text-blue-600 font-medium">
+                        <i class="fas fa-search mr-2"></i>Search Stays
+                    </a>
+                    <a href="/my-bookings" class="text-gray-700 hover:text-blue-600 font-medium">
+                        <i class="fas fa-calendar mr-2"></i>My Bookings
+                    </a>
+                    <a href="/wishlist" class="text-gray-700 hover:text-blue-600 font-medium">
+                        <i class="fas fa-heart mr-2"></i>Wishlist
+                    </a>
+                    
+                    <!-- Owner Navigation (only shown to owners) -->
+                    <a href="/owner/properties" class="text-gray-700 hover:text-blue-600 font-medium">
+                        <i class="fas fa-home mr-2"></i>My Properties
+                    </a>
+                    <a href="/owner/bookings" class="text-gray-700 hover:text-blue-600 font-medium">
+                        <i class="fas fa-receipt mr-2"></i>Bookings
+                    </a>
+                    <a href="/owner/calendar" class="text-gray-700 hover:text-blue-600 font-medium">
+                        <i class="fas fa-calendar-alt mr-2"></i>Calendar
+                    </a>
+                    
+                    <!-- Admin Navigation (only shown to admins) -->
+                    <a href="/admin" class="text-gray-700 hover:text-blue-600 font-medium">
+                        <i class="fas fa-cog mr-2"></i>Admin
+                    </a>
+                </div>
+            </div>
+            
+            <!-- User Menu -->
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <button id="user-menu" class="flex items-center space-x-2">
+                        <img src="/static/images/avatar.jpg" alt="User" class="h-8 w-8 rounded-full">
+                        <span class="hidden md:inline">John Doe</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    
+                    <!-- Dropdown Menu -->
+                    <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
+                        <a href="/profile" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                            <i class="fas fa-user mr-2"></i>Profile
+                        </a>
+                        <a href="/settings" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                            <i class="fas fa-cog mr-2"></i>Settings
+                        </a>
+                        <div class="border-t my-2"></div>
+                        <a href="/logout" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<style>
+    /* Add role-based styling */
+    [data-role="customer"] .owner-nav,
+    [data-role="customer"] .admin-nav {
+        display: none !important;
+    }
+    
+    [data-role="owner"] .admin-nav {
+        display: none !important;
+    }
+    
+    [data-role="admin"] .owner-nav {
+        display: flex !important;
+    }
+</style>
+
+<script>
+    // Simple role detection (you'll replace this with real auth)
+    document.addEventListener('DOMContentLoaded', function() {
+        const userRole = localStorage.getItem('userRole') || 'customer';
+        document.body.setAttribute('data-role', userRole);
+        
+        // Toggle user dropdown
+        document.getElementById('user-menu').addEventListener('click', function() {
+            document.getElementById('user-dropdown').classList.toggle('hidden');
+        });
+    });
+</script>

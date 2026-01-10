@@ -1,0 +1,431 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riverside Executive Hotel - ZamStay</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .amenity-item {
+            transition: all 0.3s ease;
+        }
+        .amenity-item:hover {
+            transform: translateY(-2px);
+            background-color: #f0fdf4;
+        }
+        .booking-step {
+            position: relative;
+        }
+        .booking-step.active::before {
+            content: "";
+            position: absolute;
+            left: -24px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background-color: #059669;
+            border-radius: 50%;
+        }
+        .payment-option {
+            border: 2px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+        .payment-option:hover, .payment-option.selected {
+            border-color: #059669;
+            background-color: #f0fdf4;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <div class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="/guest/" class="text-gray-600 hover:text-gray-900 mr-4">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <div class="w-8 h-8 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-lg flex items-center justify-center mr-2">
+                        <i class="fas fa-building text-white"></i>
+                    </div>
+                    <h1 class="text-xl font-bold text-gray-900">ZAMSTAY</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 text-gray-600 hover:text-gray-900">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
+                    <button class="p-2 text-gray-600 hover:text-gray-900">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <a href="/guest/" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700">
+                        Back to Search
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Property Header -->
+    <div class="bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Riverside Executive Hotel</h1>
+                    <div class="flex items-center mt-2">
+                        <div class="flex text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <span class="ml-2 font-bold">4.9</span>
+                        <span class="ml-1 text-gray-600">(128 verified reviews)</span>
+                        <span class="mx-2 text-gray-300">•</span>
+                        <span class="text-emerald-600 font-medium">
+                            <i class="fas fa-shield-check mr-1"></i>ZamStay Verified
+                        </span>
+                    </div>
+                    <p class="text-gray-600 mt-2">
+                        <i class="fas fa-map-marker-alt mr-2"></i>Longacres, Lusaka • 1.2km from city center
+                    </p>
+                </div>
+                <div class="mt-4 md:mt-0">
+                    <div class="text-3xl font-bold text-emerald-700">K850</div>
+                    <div class="text-gray-600">per night • <span class="line-through">K1,200</span></div>
+                    <div class="text-sm text-emerald-600 font-medium">Save K350 per night</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column - Main Content -->
+            <div class="lg:col-span-2">
+                <!-- Image Gallery -->
+                <div class="mb-8">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-2">
+                            <div class="bg-gradient-to-br from-emerald-100 to-cyan-100 h-64 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-hotel text-6xl text-emerald-400"></i>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-br from-blue-100 to-cyan-100 h-32 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-swimming-pool text-3xl text-blue-400"></i>
+                        </div>
+                        <div class="bg-gradient-to-br from-green-100 to-emerald-100 h-32 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-utensils text-3xl text-green-400"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Features -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Key Features</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="amenity-item p-4 bg-white rounded-xl border border-gray-200">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-bolt text-emerald-600"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-gray-800">Full Loadshedding Immunity</h3>
+                                    <p class="text-sm text-gray-600">Solar + Generator backup (48hrs)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="amenity-item p-4 bg-white rounded-xl border border-gray-200">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-tint text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-gray-800">24/7 Water Supply</h3>
+                                    <p class="text-sm text-gray-600">Borehole + Municipal backup</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="amenity-item p-4 bg-white rounded-xl border border-gray-200">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-wifi text-purple-600"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-gray-800">High-Speed WiFi</h3>
+                                    <p class="text-sm text-gray-600">100 Mbps fiber connection</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="amenity-item p-4 bg-white rounded-xl border border-gray-200">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-shield-check text-amber-600"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-gray-800">Verified Property</h3>
+                                    <p class="text-sm text-gray-600">Inspected & approved by ZamStay</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Local Attractions -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-landmark mr-2"></i>Local Attractions
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="flex items-center p-4 bg-white rounded-xl border border-gray-200">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                                <i class="fas fa-shopping-cart text-blue-600"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="font-bold text-gray-800">Manda Hill Mall</h3>
+                                <p class="text-gray-600">Premier shopping and dining destination</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-bold text-gray-900">1.4 km</div>
+                                <div class="text-sm text-gray-600">8 min drive</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-4 bg-white rounded-xl border border-gray-200">
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                                <i class="fas fa-landmark text-purple-600"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="font-bold text-gray-800">National Museum of Zambia</h3>
+                                <p class="text-gray-600">History and contemporary Zambian art</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-bold text-gray-900">2.1 km</div>
+                                <div class="text-sm text-gray-600">10 min drive</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-4 bg-white rounded-xl border border-gray-200">
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                                <i class="fas fa-golf-ball text-green-600"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="font-bold text-gray-800">Lusaka Golf Club</h3>
+                                <p class="text-gray-600">18-hole championship golf course</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-bold text-gray-900">3.2 km</div>
+                                <div class="text-sm text-gray-600">15 min drive</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Booking Widget -->
+            <div class="space-y-6">
+                <!-- Booking Steps -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-6">Book Your Stay</h2>
+                    
+                    <!-- Step 1: Dates -->
+                    <div class="mb-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center mr-3">
+                                <span class="font-bold text-emerald-700">1</span>
+                            </div>
+                            <h3 class="font-bold text-gray-800">Select Dates</h3>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Check-in</label>
+                                <input type="date" class="w-full border border-gray-300 rounded-lg px-4 py-2" value="2026-01-10">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Check-out</label>
+                                <input type="date" class="w-full border border-gray-300 rounded-lg px-4 py-2" value="2026-01-12">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Guests -->
+                    <div class="mb-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center mr-3">
+                                <span class="font-bold text-emerald-700">2</span>
+                            </div>
+                            <h3 class="font-bold text-gray-800">Guests</h3>
+                        </div>
+                        <select class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                            <option>2 Adults</option>
+                            <option>1 Adult</option>
+                            <option>2 Adults, 1 Child</option>
+                            <option>2 Adults, 2 Children</option>
+                            <option>3 Adults</option>
+                            <option>4 Adults</option>
+                        </select>
+                    </div>
+
+                    <!-- Step 3: Payment Method -->
+                    <div class="mb-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center mr-3">
+                                <span class="font-bold text-emerald-700">3</span>
+                            </div>
+                            <h3 class="font-bold text-gray-800">Payment Method</h3>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="payment-option p-4 rounded-lg cursor-pointer selected">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                                        <i class="fas fa-mobile-alt text-green-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h4 class="font-bold text-gray-800">MTN MoMo</h4>
+                                        <p class="text-sm text-gray-600">Instant payment • No fees</p>
+                                    </div>
+                                    <i class="fas fa-check-circle text-green-500"></i>
+                                </div>
+                            </div>
+                            <div class="payment-option p-4 rounded-lg cursor-pointer">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                        <i class="fas fa-sim-card text-blue-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h4 class="font-bold text-gray-800">Airtel Money</h4>
+                                        <p class="text-sm text-gray-600">Instant payment • No fees</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="payment-option p-4 rounded-lg cursor-pointer">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                                        <i class="fas fa-credit-card text-purple-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h4 class="font-bold text-gray-800">Credit/Debit Card</h4>
+                                        <p class="text-sm text-gray-600">Visa, Mastercard, Amex</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Price Summary -->
+                    <div class="mb-6">
+                        <h3 class="font-bold text-gray-800 mb-4">Price Summary</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">K850 × 2 nights</span>
+                                <span class="font-bold">K1,700</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Service fee</span>
+                                <span>K120</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Taxes</span>
+                                <span>K85</span>
+                            </div>
+                            <div class="border-t pt-2 mt-2">
+                                <div class="flex justify-between font-bold text-lg">
+                                    <span>Total</span>
+                                    <span class="text-emerald-700">K1,905</span>
+                                </div>
+                                <div class="text-sm text-gray-600 mt-1">
+                                    <i class="fas fa-info-circle mr-1"></i>Save K350 vs regular rate
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Book Button -->
+                    <button id="book-now" class="w-full bg-gradient-to-r from-emerald-600 to-cyan-600 text-white font-bold py-3 rounded-lg hover:opacity-90 transition text-lg">
+                        <i class="fas fa-lock mr-2"></i>Book & Pay with MTN MoMo
+                    </button>
+                    
+                    <div class="text-center mt-4 text-sm text-gray-600">
+                        <p><i class="fas fa-shield-check mr-1"></i>Secure payment • Instant confirmation</p>
+                    </div>
+                </div>
+
+                <!-- Why Book This Property -->
+                <div class="bg-emerald-50 rounded-xl p-6">
+                    <h3 class="font-bold text-gray-800 mb-4">
+                        <i class="fas fa-check-circle text-emerald-600 mr-2"></i>Why Book This Property
+                    </h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-emerald-500 mr-2"></i>
+                            <span>Instant confirmation - no waiting</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-emerald-500 mr-2"></i>
+                            <span>Free cancellation up to 24 hours</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-emerald-500 mr-2"></i>
+                            <span>24/7 customer support</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-emerald-500 mr-2"></i>
+                            <span>Best price guaranteed</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Payment option selection
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.payment-option').forEach(o => {
+                        o.classList.remove('selected');
+                        o.querySelector('.fa-check-circle')?.remove();
+                    });
+                    
+                    this.classList.add('selected');
+                    
+                    // Add check icon
+                    const checkIcon = document.createElement('i');
+                    checkIcon.className = 'fas fa-check-circle text-green-500';
+                    this.querySelector('.flex-1').after(checkIcon);
+                    
+                    // Update book button text
+                    const paymentType = this.querySelector('h4').textContent;
+                    const bookBtn = document.getElementById('book-now');
+                    if (paymentType.includes('MTN')) {
+                        bookBtn.innerHTML = '<i class="fas fa-lock mr-2"></i>Book & Pay with MTN MoMo';
+                    } else if (paymentType.includes('Airtel')) {
+                        bookBtn.innerHTML = '<i class="fas fa-lock mr-2"></i>Book & Pay with Airtel Money';
+                    } else {
+                        bookBtn.innerHTML = '<i class="fas fa-lock mr-2"></i>Book & Pay with Card';
+                    }
+                });
+            });
+            
+            // Book now button
+            document.getElementById('book-now').addEventListener('click', function() {
+                const dates = document.querySelector('input[type="date"]').value;
+                const guests = document.querySelector('select').value;
+                const total = 'K1,905';
+                
+                // Show confirmation modal (simplified)
+                alert(`Booking confirmed!\n\nCheck-in: ${dates}\nGuests: ${guests}\nTotal: ${total}\n\nYou will receive MTN MoMo payment request shortly.`);
+                
+                // In real app, this would redirect to payment gateway
+            });
+            
+            // Back button functionality
+            document.querySelector('.fa-arrow-left').closest('a').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.history.back();
+            });
+        });
+    </script>
+</body>
+</html>

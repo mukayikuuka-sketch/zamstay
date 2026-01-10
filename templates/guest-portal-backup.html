@@ -1,0 +1,364 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZamStay - Find Your Stay in Zambia</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        .utility-badge { 
+            display: inline-flex; 
+            align-items: center; 
+            padding: 4px 12px; 
+            border-radius: 20px; 
+            font-size: 0.875rem; 
+            font-weight: 500; 
+            margin: 2px 4px 2px 0; 
+        }
+        .solar-badge { background-color: rgba(34, 197, 94, 0.15); color: #16a34a; }
+        .water-badge { background-color: rgba(6, 182, 212, 0.15); color: #0891b2; }
+        .backup-badge { background-color: rgba(168, 85, 247, 0.15); color: #9333ea; }
+        .verified-badge { background-color: rgba(59, 130, 246, 0.15); color: #2563eb; }
+        
+        .property-card {
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+        .property-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .search-box {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Top Navigation -->
+    <div class="bg-white shadow-sm sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-lg flex items-center justify-center mr-2">
+                        <i class="fas fa-building text-white"></i>
+                    </div>
+                    <h1 class="text-xl font-bold text-gray-900">ZAMSTAY</h1>
+                    <span class="ml-2 px-2 py-1 bg-emerald-100 text-emerald-800 text-xs rounded-full">GUEST</span>
+                </div>
+                
+                <!-- User Menu -->
+                <div class="flex items-center space-x-4">
+                    <button id="switch-to-owner" class="px-4 py-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white rounded-lg hover:opacity-90 transition text-sm">
+                        <i class="fas fa-exchange-alt mr-2"></i>Switch to Owner
+                    </button>
+                    <button class="p-2 text-gray-600 hover:text-gray-900">
+                        <i class="fas fa-user-circle text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hero Section with Search -->
+    <div class="relative bg-gradient-to-r from-emerald-600 to-cyan-600">
+        <div class="absolute inset-0 bg-black opacity-20"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="text-center text-white mb-8">
+                <h1 class="text-3xl md:text-4xl font-bold mb-4">Find Your Perfect Stay in Zambia</h1>
+                <p class="text-lg text-emerald-100">Book hotels, lodges, and apartments with guaranteed power & water backup</p>
+            </div>
+            
+            <!-- Search Box -->
+            <div class="search-box rounded-2xl p-6 max-w-4xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                    <!-- Destination -->
+                    <div class="md:col-span-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="fas fa-map-marker-alt mr-2"></i>Destination
+                        </label>
+                        <select class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option value="">Where in Zambia?</option>
+                            <option value="lusaka" selected>Lusaka</option>
+                            <option value="livingstone">Livingstone (Victoria Falls)</option>
+                            <option value="ndola">Ndola</option>
+                            <option value="kitwe">Kitwe</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Dates -->
+                    <div class="md:col-span-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="fas fa-calendar-alt mr-2"></i>Check-in / Check-out
+                        </label>
+                        <input type="text" 
+                               placeholder="Jan 10 - Jan 12, 2026" 
+                               class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    
+                    <!-- Guests -->
+                    <div class="md:col-span-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="fas fa-user-friends mr-2"></i>Guests
+                        </label>
+                        <select class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option>1 Adult</option>
+                            <option selected>2 Adults</option>
+                            <option>3 Adults</option>
+                            <option>4 Adults</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Search Button -->
+                    <div class="md:col-span-2 flex items-end">
+                        <button class="w-full bg-gradient-to-r from-emerald-600 to-cyan-600 text-white font-semibold py-3 rounded-lg hover:opacity-90 transition">
+                            <i class="fas fa-search mr-2"></i>Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Featured Properties -->
+        <div class="mb-12">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">Featured Properties in Lusaka</h2>
+                <a href="#" class="text-emerald-600 font-medium hover:text-emerald-700 flex items-center">
+                    View all <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Property 1: Riverside Executive Lodge -->
+                <div class="property-card bg-white rounded-xl overflow-hidden">
+                    <div class="relative">
+                        <div class="w-full h-48 bg-gradient-to-br from-emerald-100 to-cyan-100 flex items-center justify-center">
+                            <i class="fas fa-building text-5xl text-emerald-400"></i>
+                        </div>
+                        <div class="absolute top-3 left-3">
+                            <span class="px-2 py-1 bg-white/90 backdrop-blur text-xs font-semibold rounded">ZAMSTAY VERIFIED</span>
+                        </div>
+                        <div class="absolute top-3 right-3">
+                            <button class="w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center hover:bg-white">
+                                <i class="fas fa-heart text-gray-600"></i>
+                            </button>
+                        </div>
+                        <div class="absolute bottom-3 right-3">
+                            <span class="px-2 py-1 bg-emerald-500 text-white text-xs font-semibold rounded">FLASH SALE</span>
+                        </div>
+                    </div>
+                    
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-lg text-gray-900">Riverside Executive Lodge</h3>
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                <span class="font-bold">4.9</span>
+                                <span class="text-gray-500 text-sm ml-1">(128 reviews)</span>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-600 text-sm mb-3">
+                            <i class="fas fa-map-marker-alt text-gray-400 mr-2"></i>Longacres, Lusaka • 1.2km from city center
+                        </p>
+                        
+                        <!-- Utility Badges -->
+                        <div class="mb-4">
+                            <span class="utility-badge solar-badge"><i class="fas fa-sun mr-1"></i>Solar Ready</span>
+                            <span class="utility-badge water-badge"><i class="fas fa-tint mr-1"></i>Borehole Water</span>
+                            <span class="utility-badge backup-badge"><i class="fas fa-car-battery mr-1"></i>Gen-set Backup</span>
+                        </div>
+                        
+                        <!-- Price & Booking -->
+                        <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                            <div>
+                                <div class="text-sm text-gray-500">Starting from</div>
+                                <div class="flex items-baseline">
+                                    <span class="text-2xl font-bold text-emerald-700">K850</span>
+                                    <span class="text-gray-500 ml-1">/night</span>
+                                    <span class="ml-2 text-sm text-gray-500 line-through">K1,200</span>
+                                </div>
+                            </div>
+                            <button class="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white font-semibold rounded-lg hover:opacity-90 transition">
+                                Book Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Property 2: Full Loadshedding Inn -->
+                <div class="property-card bg-white rounded-xl overflow-hidden">
+                    <div class="relative">
+                        <div class="w-full h-48 bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
+                            <i class="fas fa-bolt text-5xl text-blue-400"></i>
+                        </div>
+                        <div class="absolute top-3 left-3">
+                            <span class="px-2 py-1 bg-white/90 backdrop-blur text-xs font-semibold rounded">POWER GUARANTEE</span>
+                        </div>
+                    </div>
+                    
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-lg text-gray-900">Full Loadshedding Inn</h3>
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                <span class="font-bold">4.7</span>
+                                <span class="text-gray-500 text-sm ml-1">(94 reviews)</span>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-600 text-sm mb-3">
+                            <i class="fas fa-map-marker-alt text-gray-400 mr-2"></i>Lusaka CBD • Solar & Battery backup
+                        </p>
+                        
+                        <!-- Utility Badges -->
+                        <div class="mb-4">
+                            <span class="utility-badge solar-badge"><i class="fas fa-sun mr-1"></i>Full Solar System</span>
+                            <span class="utility-badge backup-badge"><i class="fas fa-car-battery mr-1"></i>48hr Battery Backup</span>
+                            <span class="utility-badge water-badge"><i class="fas fa-tint mr-1"></i>24/7 Water</span>
+                        </div>
+                        
+                        <!-- Price & Booking -->
+                        <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                            <div>
+                                <div class="text-sm text-gray-500">Special offer</div>
+                                <div class="flex items-baseline">
+                                    <span class="text-2xl font-bold text-emerald-700">K1,200</span>
+                                    <span class="text-gray-500 ml-1">/night</span>
+                                    <span class="ml-2 text-sm text-gray-500 line-through">K1,850</span>
+                                </div>
+                            </div>
+                            <button class="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white font-semibold rounded-lg hover:opacity-90 transition">
+                                Book Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Property 3: Garden Suites -->
+                <div class="property-card bg-white rounded-xl overflow-hidden">
+                    <div class="relative">
+                        <div class="w-full h-48 bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center">
+                            <i class="fas fa-leaf text-5xl text-green-400"></i>
+                        </div>
+                        <div class="absolute top-3 left-3">
+                            <span class="px-2 py-1 bg-white/90 backdrop-blur text-xs font-semibold rounded">ECO-FRIENDLY</span>
+                        </div>
+                    </div>
+                    
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-lg text-gray-900">Garden Suites</h3>
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                <span class="font-bold">4.8</span>
+                                <span class="text-gray-500 text-sm ml-1">(76 reviews)</span>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-600 text-sm mb-3">
+                            <i class="fas fa-map-marker-alt text-gray-400 mr-2"></i>Woodlands, Lusaka • Peaceful garden setting
+                        </p>
+                        
+                        <!-- Utility Badges -->
+                        <div class="mb-4">
+                            <span class="utility-badge solar-badge"><i class="fas fa-sun mr-1"></i>Solar Powered</span>
+                            <span class="utility-badge water-badge"><i class="fas fa-tint mr-1"></i>Rainwater Harvesting</span>
+                        </div>
+                        
+                        <!-- Price & Booking -->
+                        <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                            <div>
+                                <div class="text-sm text-gray-500">Weekday special</div>
+                                <div class="flex items-baseline">
+                                    <span class="text-2xl font-bold text-emerald-700">K650</span>
+                                    <span class="text-gray-500 ml-1">/night</span>
+                                </div>
+                            </div>
+                            <button class="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white font-semibold rounded-lg hover:opacity-90 transition">
+                                Book Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Why Choose ZamStay -->
+        <div class="bg-gradient-to-r from-emerald-50 to-cyan-50 rounded-2xl p-8 mb-12">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Why Choose ZamStay in Zambia</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center p-4">
+                    <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-bolt text-2xl text-emerald-600"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Power Guarantee</h3>
+                    <p class="text-gray-600">Every property vetted for reliable power backup during load shedding</p>
+                </div>
+                <div class="text-center p-4">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-shield-alt text-2xl text-blue-600"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Verified Properties</h3>
+                    <p class="text-gray-600">Each property inspected for water, power, and service quality</p>
+                </div>
+                <div class="text-center p-4">
+                    <div class="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-mobile-alt text-2xl text-cyan-600"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Local Payments</h3>
+                    <p class="text-gray-600">Pay with MTN MoMo, Airtel Money, or cards. No hidden fees</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Switch to Owner button
+        document.getElementById('switch-to-owner').addEventListener('click', function() {
+            window.location.href = '/owner/';
+        });
+        
+        // Book Now buttons
+        document.querySelectorAll('button:contains("Book Now")').forEach(button => {
+            button.addEventListener('click', function() {
+                const property = this.closest('.property-card').querySelector('h3').textContent;
+                alert(`Booking flow for ${property} would open here with MTN MoMo/Airtel payment options`);
+            });
+        });
+        
+        // Welcome message
+        setTimeout(() => {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-emerald-600 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 translate-x-64';
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-info-circle mr-3"></i>
+                    <span>Welcome to ZamStay! Find your perfect stay in Zambia</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.remove('translate-x-64');
+                notification.classList.add('translate-x-0');
+            }, 10);
+            
+            setTimeout(() => {
+                notification.classList.remove('translate-x-0');
+                notification.classList.add('translate-x-64');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }, 1000);
+    </script>
+</body>
+</html>

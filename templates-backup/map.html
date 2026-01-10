@@ -1,0 +1,837 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZamReach - Business Map</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        .sidebar { background: linear-gradient(180deg, #1a472a 0%, #0a2f1a 100%); }
+        #map { height: 600px; border-radius: 12px; }
+        .leaflet-container { font-family: inherit; }
+        .location-marker { 
+            width: 24px; 
+            height: 24px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: white; 
+            font-weight: bold; 
+            border: 2px solid white; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3); 
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar w-64 text-white p-6">
+            <div class="flex items-center mb-8">
+                <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center mr-3">
+                    <i class="fas fa-map-marked-alt text-white"></i>
+                </div>
+                <h1 class="text-2xl font-bold">ZamReach Map</h1>
+            </div>
+            <p class="text-gray-300 mb-8 text-sm">Business Locations & Analytics</p>
+            
+                        <nav>
+                <h2 class="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-4">Home</h2>
+                <ul class="space-y-2">
+                    <li><a href="/" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-tachometer-alt mr-3"></i> Dashboard</a></li>
+                    <li><a href="/map/" class="flex items-center p-3 bg-gray-700 rounded-lg transition"><i class="fas fa-map-marked-alt mr-3"></i> Map</a></li>
+                    <li><a href="/analytics/" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-chart-line mr-3"></i> Analytics</a></li>
+                    <li><a href="/promotions/" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-bullhorn mr-3"></i> Promotions</a></li>
+                    <li><a href="/profile/" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-user-circle mr-3"></i> Profile</a></li>
+                </ul>
+            </nav>
+            
+            <!-- Map Controls -->
+            <div class="mt-12 pt-8 border-t border-green-700">
+                <h3 class="text-gray-300 text-xs font-semibold uppercase tracking-wider mb-4">Map Controls</h3>
+                <div class="space-y-2">
+                    <button id="zoom-in-btn" class="w-full flex items-center p-3 bg-green-600 hover:bg-green-700 rounded-lg transition">
+                        <i class="fas fa-search-plus mr-3"></i> Zoom In
+                    </button>
+                    <button id="zoom-out-btn" class="w-full flex items-center p-3 bg-green-600 hover:bg-green-700 rounded-lg transition">
+                        <i class="fas fa-search-minus mr-3"></i> Zoom Out
+                    </button>
+                    <button id="locate-btn" class="w-full flex items-center p-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition">
+                        <i class="fas fa-location-crosshairs mr-3"></i> My Location
+                    </button>
+                    <button id="reset-view-btn" class="w-full flex items-center p-3 bg-purple-600 hover:bg-purple-700 rounded-lg transition">
+                        <i class="fas fa-globe-africa mr-3"></i> Reset View
+                    </button>
+                </div>
+                
+                <!-- Layer Toggles -->
+                <div class="mt-6 pt-6 border-t border-green-700">
+                    <h3 class="text-gray-300 text-xs font-semibold uppercase tracking-wider mb-4">Map Layers</h3>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="satellite-toggle" class="mr-2 rounded">
+                            <span class="text-sm">Satellite View</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="heatmap-toggle" class="mr-2 rounded">
+                            <span class="text-sm">Customer Heatmap</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="traffic-toggle" class="mr-2 rounded" checked>
+                            <span class="text-sm">Road Network</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="mt-12 pt-8 border-t border-green-700">
+                <h3 class="text-gray-300 text-xs font-semibold uppercase tracking-wider mb-4">Quick Stats</h3>
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm">Total Locations:</span>
+                        <span class="font-bold" id="total-locations-sidebar">6</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm">Active Locations:</span>
+                        <span class="font-bold text-green-300" id="active-locations-sidebar">5</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm">Total Customers:</span>
+                        <span class="font-bold" id="total-customers-sidebar">3,465</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm">Avg Rating:</span>
+                        <span class="font-bold text-yellow-300" id="avg-rating-sidebar">4.7</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <div class="p-8">
+                <!-- Header -->
+                <div class="mb-8">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-800">Business Locations Map</h1>
+                            <p class="text-gray-600 mt-2">Interactive map showing your business locations across Zambia</p>
+                        </div>
+                        <div class="flex space-x-4">
+                            <button id="refresh-map-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                                <i class="fas fa-sync-alt mr-2"></i>Refresh Map
+                            </button>
+                            <button id="export-map-btn" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                                <i class="fas fa-download mr-2"></i>Export Map
+                            </button>
+                            <button id="print-map-btn" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+                                <i class="fas fa-print mr-2"></i>Print
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Map Container -->
+                <div id="map" class="shadow-xl mb-8"></div>
+                
+                <!-- Location Stats -->
+                <div class="mb-8 grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="text-2xl font-bold text-blue-600" id="total-locations">6</div>
+                                <div class="text-gray-600">Total Locations</div>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-map-marker-alt text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-blue-600 text-sm">
+                            <i class="fas fa-building mr-1"></i> Across 6 cities
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="text-2xl font-bold text-green-600" id="active-locations">5</div>
+                                <div class="text-gray-600">Active Locations</div>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-green-600 text-sm">
+                            <i class="fas fa-clock mr-1"></i> 1 inactive
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="text-2xl font-bold text-purple-600" id="total-customers-map">3,465</div>
+                                <div class="text-gray-600">Total Customers</div>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-users text-purple-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-purple-600 text-sm">
+                            <i class="fas fa-user-plus mr-1"></i> +245 this month
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="text-2xl font-bold text-yellow-600" id="avg-rating">4.7</div>
+                                <div class="text-gray-600">Average Rating</div>
+                            </div>
+                            <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-star text-yellow-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-yellow-600 text-sm">
+                            <i class="fas fa-thumbs-up mr-1"></i> 89% satisfaction
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Location List -->
+                <div class="bg-white rounded-xl shadow p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-gray-800">Business Locations</h2>
+                        <div class="flex space-x-4">
+                            <button id="add-new-location-btn" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                                <i class="fas fa-plus mr-2"></i>Add New
+                            </button>
+                            <button id="filter-locations-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                                <i class="fas fa-filter mr-2"></i>Filter
+                            </button>
+                            <button id="sort-locations-btn" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+                                <i class="fas fa-sort mr-2"></i>Sort
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead>
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customers</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rating</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="locations-table" class="divide-y divide-gray-200">
+                                <!-- Locations will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification Container -->
+    <div id="map-notification-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+    
+    <!-- Modal for Location Details -->
+    <div id="location-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800" id="modal-location-name">Location Details</h2>
+                    <button id="close-modal" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                </div>
+                <div id="modal-content">
+                    <!-- Content loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // ========== MAP DATA ==========
+        const locations = [
+            { 
+                id: 1, 
+                name: "Lusaka HQ", 
+                lat: -15.4167, 
+                lng: 28.2833, 
+                type: "Headquarters", 
+                customers: 1250, 
+                status: "Active", 
+                rating: 4.8,
+                address: "Central Business District, Lusaka",
+                manager: "John Banda",
+                phone: "+260 211 123456",
+                email: "lusaka@zamreach.com",
+                hours: "Mon-Fri: 8AM-6PM, Sat: 9AM-1PM",
+                description: "Main headquarters overseeing all operations",
+                revenue: 18500,
+                employees: 24
+            },
+            { 
+                id: 2, 
+                name: "Ndola Branch", 
+                lat: -12.9683, 
+                lng: 28.6337, 
+                type: "Branch", 
+                customers: 850, 
+                status: "Active", 
+                rating: 4.6,
+                address: "Industrial Area, Ndola",
+                manager: "Sarah Mwamba",
+                phone: "+260 212 654321",
+                email: "ndola@zamreach.com",
+                hours: "Mon-Fri: 8AM-5PM",
+                description: "Copperbelt region branch office",
+                revenue: 12400,
+                employees: 18
+            },
+            { 
+                id: 3, 
+                name: "Livingstone Office", 
+                lat: -17.8416, 
+                lng: 25.8543, 
+                type: "Office", 
+                customers: 420, 
+                status: "Active", 
+                rating: 4.9,
+                address: "Near Victoria Falls, Livingstone",
+                manager: "David Phiri",
+                phone: "+260 213 789012",
+                email: "livingstone@zamreach.com",
+                hours: "Mon-Sun: 7AM-7PM",
+                description: "Tourism-focused office near Victoria Falls",
+                revenue: 8900,
+                employees: 12
+            },
+            { 
+                id: 4, 
+                name: "Kitwe Store", 
+                lat: -12.8133, 
+                lng: 28.2139, 
+                type: "Store", 
+                customers: 320, 
+                status: "Active", 
+                rating: 4.5,
+                address: "City Centre, Kitwe",
+                manager: "Mary Tembo",
+                phone: "+260 212 345678",
+                email: "kitwe@zamreach.com",
+                hours: "Mon-Sat: 9AM-8PM, Sun: 10AM-4PM",
+                description: "Retail store in Kitwe city centre",
+                revenue: 7600,
+                employees: 8
+            },
+            { 
+                id: 5, 
+                name: "Kabwe Outlet", 
+                lat: -14.4431, 
+                lng: 28.4514, 
+                type: "Outlet", 
+                customers: 280, 
+                status: "Active", 
+                rating: 4.4,
+                address: "Railway Area, Kabwe",
+                manager: "Peter Mulenga",
+                phone: "+260 215 901234",
+                email: "kabwe@zamreach.com",
+                hours: "Mon-Fri: 8AM-6PM",
+                description: "Small outlet serving central province",
+                revenue: 5200,
+                employees: 6
+            },
+            { 
+                id: 6, 
+                name: "Chipata Center", 
+                lat: -13.6333, 
+                lng: 32.6500, 
+                type: "Center", 
+                customers: 190, 
+                status: "Inactive", 
+                rating: 4.2,
+                address: "Eastern Province, Chipata",
+                manager: "Grace Bwalya",
+                phone: "+260 216 567890",
+                email: "chipata@zamreach.com",
+                hours: "Temporarily Closed",
+                description: "Eastern province service center (under renovation)",
+                revenue: 3100,
+                employees: 5
+            }
+        ];
+        
+        // ========== MAP VARIABLES ==========
+        let map;
+        let markers = [];
+        let currentLayer = 'street';
+        
+        // ========== NOTIFICATION SYSTEM ==========
+        function showMapNotification(message, type = 'info', duration = 3000) {
+            const container = document.getElementById('map-notification-container');
+            const notification = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-green-600' : 
+                           type === 'error' ? 'bg-red-600' : 
+                           type === 'warning' ? 'bg-yellow-600' : 'bg-blue-600';
+            
+            notification.className = `${bgColor} text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 translate-x-64`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'} mr-3"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            container.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-64');
+                notification.classList.add('translate-x-0');
+            }, 10);
+            
+            // Auto remove
+            setTimeout(() => {
+                notification.classList.remove('translate-x-0');
+                notification.classList.add('translate-x-64');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 300);
+            }, duration);
+        }
+        
+        // ========== MAP FUNCTIONS ==========
+        function initMap() {
+            // Create map centered on Zambia
+            map = L.map('map').setView([-15.3875, 28.3228], 7);
+            
+            // Add tile layers
+            const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 18,
+            });
+            
+            const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: '© Esri',
+                maxZoom: 18,
+            });
+            
+            // Add default layer
+            streetLayer.addTo(map);
+            
+            // Store layers for toggling
+            window.mapLayers = {
+                street: streetLayer,
+                satellite: satelliteLayer
+            };
+            
+            // Add location markers
+            locations.forEach(location => {
+                addMarker(location);
+            });
+            
+            // Update stats
+            updateMapStats();
+            
+            // Load locations table
+            loadLocationsTable();
+            
+            showMapNotification('Map loaded successfully!', 'success');
+        }
+        
+        function addMarker(location) {
+            // Choose marker color based on status
+            const iconColor = location.status === 'Active' ? '#10b981' : '#ef4444';
+            const iconHtml = `
+                <div class="location-marker" style="background-color: ${iconColor};">
+                    <i class="fas fa-map-marker-alt" style="font-size: 12px;"></i>
+                </div>
+            `;
+            
+            const icon = L.divIcon({
+                html: iconHtml,
+                className: 'custom-div-icon',
+                iconSize: [24, 24],
+                iconAnchor: [12, 24]
+            });
+            
+            const marker = L.marker([location.lat, location.lng], { icon })
+                .addTo(map)
+                .bindPopup(`
+                    <div class="p-2 min-w-[200px]">
+                        <h3 class="font-bold text-lg mb-2">${location.name}</h3>
+                        <p class="text-gray-600 text-sm mb-1"><i class="fas fa-building mr-1"></i> ${location.type}</p>
+                        <p class="text-gray-600 text-sm mb-1"><i class="fas fa-users mr-1"></i> ${location.customers.toLocaleString()} customers</p>
+                        <p class="text-gray-600 text-sm mb-1"><i class="fas fa-star mr-1"></i> ${location.rating}/5 rating</p>
+                        <p class="text-gray-600 text-sm mb-3"><i class="fas fa-circle mr-1" style="color: ${location.status === 'Active' ? '#10b981' : '#ef4444'}"></i> ${location.status}</p>
+                        <button onclick="showLocationDetails(${location.id})" class="w-full px-3 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition">
+                            <i class="fas fa-eye mr-1"></i> View Details
+                        </button>
+                    </div>
+                `);
+            
+            marker.locationId = location.id;
+            markers.push(marker);
+        }
+        
+        function updateMapStats() {
+            const totalLocations = locations.length;
+            const activeLocations = locations.filter(l => l.status === 'Active').length;
+            const totalCustomers = locations.reduce((sum, loc) => sum + loc.customers, 0);
+            const avgRating = (locations.reduce((sum, loc) => sum + loc.rating, 0) / totalLocations).toFixed(1);
+            
+            // Update main stats
+            document.getElementById('total-locations').textContent = totalLocations;
+            document.getElementById('active-locations').textContent = activeLocations;
+            document.getElementById('total-customers-map').textContent = totalCustomers.toLocaleString();
+            document.getElementById('avg-rating').textContent = avgRating;
+            
+            // Update sidebar stats
+            document.getElementById('total-locations-sidebar').textContent = totalLocations;
+            document.getElementById('active-locations-sidebar').textContent = activeLocations;
+            document.getElementById('total-customers-sidebar').textContent = totalCustomers.toLocaleString();
+            document.getElementById('avg-rating-sidebar').textContent = avgRating;
+        }
+        
+        function loadLocationsTable() {
+            const tableBody = document.getElementById('locations-table');
+            tableBody.innerHTML = '';
+            
+            locations.forEach(location => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50 transition';
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900 cursor-pointer hover:text-blue-600" onclick="showLocationDetails(${location.id})">${location.name}</div>
+                                <div class="text-sm text-gray-500">${location.address}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                            ${location.type}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        ${location.customers.toLocaleString()}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${location.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${location.status}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <span class="text-yellow-500 mr-1">★</span>
+                            <span class="font-medium">${location.rating}</span>
+                            <span class="text-gray-500 text-sm ml-1">/5</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="showLocationDetails(${location.id})" class="text-blue-600 hover:text-blue-900 mr-3"><i class="fas fa-eye"></i></button>
+                        <button onclick="editLocation(${location.id})" class="text-green-600 hover:text-green-900 mr-3"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteLocation(${location.id})" class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+        
+        function showLocationDetails(locationId) {
+            const location = locations.find(l => l.id === locationId);
+            if (!location) return;
+            
+            document.getElementById('modal-location-name').textContent = location.name;
+            
+            const modalContent = document.getElementById('modal-content');
+            modalContent.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="font-bold text-gray-700 mb-2">Location Information</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <i class="fas fa-building text-gray-500 w-6"></i>
+                                <span class="ml-2">Type: <strong>${location.type}</strong></span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-map-marker-alt text-gray-500 w-6"></i>
+                                <span class="ml-2">Address: <strong>${location.address}</strong></span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-users text-gray-500 w-6"></i>
+                                <span class="ml-2">Customers: <strong>${location.customers.toLocaleString()}</strong></span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-gray-500 w-6"></i>
+                                <span class="ml-2">Rating: <strong>${location.rating}/5</strong></span>
+                            </div>
+                        </div>
+                        
+                        <h3 class="font-bold text-gray-700 mt-6 mb-2">Contact Details</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <i class="fas fa-user text-gray-500 w-6"></i>
+                                <span class="ml-2">Manager: <strong>${location.manager}</strong></span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-phone text-gray-500 w-6"></i>
+                                <span class="ml-2">Phone: <strong>${location.phone}</strong></span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-envelope text-gray-500 w-6"></i>
+                                <span class="ml-2">Email: <strong>${location.email}</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-bold text-gray-700 mb-2">Business Details</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <i class="fas fa-clock text-gray-500 w-6"></i>
+                                <span class="ml-2">Operating Hours: <strong>${location.hours}</strong></span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-chart-line text-gray-500 w-6"></i>
+                                <span class="ml-2">Monthly Revenue: <strong>$${location.revenue.toLocaleString()}</strong></span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-user-friends text-gray-500 w-6"></i>
+                                <span class="ml-2">Employees: <strong>${location.employees}</strong></span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-circle text-gray-500 w-6" style="color: ${location.status === 'Active' ? '#10b981' : '#ef4444'}"></i>
+                                <span class="ml-2">Status: <strong>${location.status}</strong></span>
+                            </div>
+                        </div>
+                        
+                        <h3 class="font-bold text-gray-700 mt-6 mb-2">Description</h3>
+                        <p class="text-gray-600">${location.description}</p>
+                        
+                        <div class="mt-6 flex space-x-4">
+                            <button onclick="focusOnLocation(${location.id})" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                                <i class="fas fa-map-marker-alt mr-2"></i>View on Map
+                            </button>
+                            <button onclick="editLocation(${location.id})" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                                <i class="fas fa-edit mr-2"></i>Edit Location
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Show modal
+            document.getElementById('location-modal').classList.remove('hidden');
+            document.getElementById('location-modal').classList.add('flex');
+        }
+        
+        function focusOnLocation(locationId) {
+            const location = locations.find(l => l.id === locationId);
+            if (!location) return;
+            
+            map.setView([location.lat, location.lng], 13);
+            
+            // Find and open the marker popup
+            const marker = markers.find(m => m.locationId === locationId);
+            if (marker) {
+                marker.openPopup();
+            }
+            
+            showMapNotification(`Focused on ${location.name}`, 'success');
+            
+            // Close modal
+            closeModal();
+        }
+        
+        function editLocation(locationId) {
+            showMapNotification(`Edit location #${locationId} - Feature coming soon!`, 'info');
+            closeModal();
+        }
+        
+        function deleteLocation(locationId) {
+            const location = locations.find(l => l.id === locationId);
+            if (!location) return;
+            
+            if (confirm(`Are you sure you want to delete "${location.name}"? This action cannot be undone.`)) {
+                showMapNotification(`Location "${location.name}" deleted successfully!`, 'success');
+                // In real app, would make API call to delete
+            }
+        }
+        
+        function closeModal() {
+            document.getElementById('location-modal').classList.add('hidden');
+            document.getElementById('location-modal').classList.remove('flex');
+        }
+        
+        function refreshMapData() {
+            showMapNotification('Refreshing map data...', 'info');
+            
+            setTimeout(() => {
+                // Simulate data update
+                locations.forEach(loc => {
+                    if (loc.status === 'Active') {
+                        loc.customers += Math.floor(Math.random() * 20) - 5;
+                        loc.rating = Math.min(5, Math.max(3, loc.rating + (Math.random() * 0.2 - 0.1)));
+                    }
+                });
+                
+                updateMapStats();
+                loadLocationsTable();
+                showMapNotification('Map data refreshed successfully!', 'success');
+            }, 1500);
+        }
+        
+        // ========== EVENT LISTENERS ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('ZamReach Map loaded!');
+            
+            // Initialize map
+            initMap();
+            
+            // Map control buttons
+            document.getElementById('zoom-in-btn').addEventListener('click', () => {
+                map.zoomIn();
+                showMapNotification('Zoomed in', 'info', 1000);
+            });
+            
+            document.getElementById('zoom-out-btn').addEventListener('click', () => {
+                map.zoomOut();
+                showMapNotification('Zoomed out', 'info', 1000);
+            });
+            
+            document.getElementById('locate-btn').addEventListener('click', () => {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(position => {
+                        const { latitude, longitude } = position.coords;
+                        map.setView([latitude, longitude], 13);
+                        
+                        L.marker([latitude, longitude])
+                            .addTo(map)
+                            .bindPopup('You are here!')
+                            .openPopup();
+                            
+                        showMapNotification('Location found!', 'success');
+                    }, () => {
+                        showMapNotification('Could not get your location. Please enable location services.', 'error');
+                    });
+                } else {
+                    showMapNotification('Geolocation is not supported by your browser.', 'error');
+                }
+            });
+            
+            document.getElementById('reset-view-btn').addEventListener('click', () => {
+                map.setView([-15.3875, 28.3228], 7);
+                showMapNotification('Map view reset to Zambia', 'info');
+            });
+            
+            // Layer toggles
+            document.getElementById('satellite-toggle').addEventListener('change', function() {
+                if (this.checked) {
+                    window.mapLayers.street.remove();
+                    window.mapLayers.satellite.addTo(map);
+                    currentLayer = 'satellite';
+                    showMapNotification('Switched to satellite view', 'info');
+                } else {
+                    window.mapLayers.satellite.remove();
+                    window.mapLayers.street.addTo(map);
+                    currentLayer = 'street';
+                    showMapNotification('Switched to street view', 'info');
+                }
+            });
+            
+            document.getElementById('heatmap-toggle').addEventListener('change', function() {
+                showMapNotification(this.checked ? 'Heatmap enabled' : 'Heatmap disabled', 'info');
+            });
+            
+            document.getElementById('traffic-toggle').addEventListener('change', function() {
+                showMapNotification(this.checked ? 'Road network shown' : 'Road network hidden', 'info');
+            });
+            
+            // Action buttons
+            document.getElementById('refresh-map-btn').addEventListener('click', refreshMapData);
+            
+            document.getElementById('export-map-btn').addEventListener('click', () => {
+                showMapNotification('Exporting map data...', 'info', 2000);
+                setTimeout(() => {
+                    showMapNotification('Map exported successfully!', 'success');
+                }, 2000);
+            });
+            
+            document.getElementById('print-map-btn').addEventListener('click', () => {
+                showMapNotification('Preparing map for printing...', 'info', 2000);
+                setTimeout(() => {
+                    window.print();
+                    showMapNotification('Print dialog opened', 'info');
+                }, 1000);
+            });
+            
+            document.getElementById('add-new-location-btn').addEventListener('click', () => {
+                showMapNotification('Opening location creation form...', 'info', 2000);
+                setTimeout(() => {
+                    showMapNotification('New location form ready', 'success');
+                }, 2000);
+            });
+            
+            document.getElementById('filter-locations-btn').addEventListener('click', () => {
+                showMapNotification('Opening location filters...', 'info');
+            });
+            
+            document.getElementById('sort-locations-btn').addEventListener('click', () => {
+                showMapNotification('Sorting locations...', 'info');
+            });
+            
+            document.getElementById('locations-list-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('locations-table').scrollIntoView({ behavior: 'smooth' });
+                showMapNotification('Scrolled to locations list', 'info');
+            });
+            
+            document.getElementById('add-location-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                showMapNotification('Add location feature coming soon!', 'info');
+            });
+            
+            document.getElementById('map-analytics-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                showMapNotification('Map analytics coming soon!', 'info');
+            });
+            
+            // Modal close button
+            document.getElementById('close-modal').addEventListener('click', closeModal);
+            
+            // Close modal on background click
+            document.getElementById('location-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
+            
+            // Welcome notification
+            setTimeout(() => {
+                showMapNotification('Interactive map loaded. Click markers for details!', 'success');
+            }, 500);
+        });
+    </script>
+</body>
+</html>
+
+
+

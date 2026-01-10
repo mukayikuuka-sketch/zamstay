@@ -1,0 +1,15 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ZamStay Properties{% endblock %}
+
+{% block content %}
+<!-- Your redesign HTML goes here -->
+{% for property in properties %}
+<div class="property-card">
+    <h2>{{ property.title }}</h2>
+    <p>{{ property.description }}</p>
+    <!-- etc -->
+</div>
+{% endfor %}
+{% endblock %}

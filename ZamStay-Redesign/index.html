@@ -1,0 +1,580 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZamStay - Property Listings</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .logo i {
+            color: #3498db;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn-icon {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #7f8c8d;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-icon:hover {
+            background-color: #f0f0f0;
+        }
+        
+        /* Category Filter */
+        .category-filter {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .category-btn {
+            padding: 12px 28px;
+            border: 2px solid #e0e0e0;
+            background-color: white;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #555;
+        }
+        
+        .category-btn.active {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .category-btn:hover:not(.active) {
+            border-color: #3498db;
+            color: #3498db;
+        }
+        
+        /* Property Cards */
+        .property-list {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .property-card {
+            background-color: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .property-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Image & Title with Price Overlay */
+        .property-image-container {
+            position: relative;
+            height: 280px;
+            overflow: hidden;
+        }
+        
+        .property-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .property-card:hover .property-image {
+            transform: scale(1.03);
+        }
+        
+        .price-overlay {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(44, 62, 80, 0.9);
+            color: white;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .property-title {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            color: white;
+            padding: 25px 20px 15px;
+        }
+        
+        .property-title h2 {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+        
+        .property-title p {
+            font-size: 15px;
+            opacity: 0.9;
+        }
+        
+        /* Property Details */
+        .property-details {
+            padding: 20px;
+        }
+        
+        /* Dynamic Amenities */
+        .amenities-section {
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            color: #2c3e50;
+            margin-bottom: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .section-title i {
+            color: #3498db;
+        }
+        
+        .amenities-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .amenity-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #555;
+            font-size: 15px;
+        }
+        
+        .amenity-item i {
+            color: #27ae60;
+            width: 20px;
+        }
+        
+        /* Integrated Map */
+        .map-section {
+            margin-bottom: 20px;
+        }
+        
+        .mini-map {
+            height: 180px;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #e8f4fc;
+            position: relative;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .map-placeholder {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #7f8c8d;
+        }
+        
+        .map-placeholder i {
+            font-size: 40px;
+            margin-bottom: 10px;
+            color: #3498db;
+        }
+        
+        .map-address {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        /* Local Attractions */
+        .attractions-section {
+            margin-bottom: 25px;
+        }
+        
+        .attractions-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .attraction-item {
+            background-color: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #2c3e50;
+            border-left: 3px solid #3498db;
+        }
+        
+        /* Call to Action */
+        .cta-section {
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #eee;
+        }
+        
+        .book-btn {
+            width: 100%;
+            padding: 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .book-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .category-filter {
+                justify-content: center;
+            }
+            
+            .category-btn {
+                padding: 10px 20px;
+                font-size: 15px;
+            }
+            
+            .property-image-container {
+                height: 220px;
+            }
+            
+            .amenities-list, .attractions-list {
+                gap: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .property-title h2 {
+                font-size: 19px;
+            }
+            
+            .price-overlay {
+                font-size: 18px;
+                padding: 8px 15px;
+            }
+            
+            .amenities-list {
+                justify-content: space-between;
+            }
+            
+            .amenity-item {
+                width: calc(50% - 10px);
+            }
+        }
+        
+        /* Animation for filtering */
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-home"></i>
+                <span>ZamStay</span>
+            </div>
+            <div class="user-actions">
+                <button class="btn-icon" title="Search"><i class="fas fa-search"></i></button>
+                <button class="btn-icon" title="Notifications"><i class="fas fa-bell"></i></button>
+                <button class="btn-icon" title="Profile"><i class="fas fa-user-circle"></i></button>
+            </div>
+        </header>
+        
+        <main>
+            <div class="category-filter">
+                <button class="category-btn active" data-category="all">All Properties</button>
+                <button class="category-btn" data-category="apartment">Apartments</button>
+                <button class="category-btn" data-category="hotel">Hotels</button>
+                <button class="category-btn" data-category="lodge">Lodges</button>
+            </div>
+            
+            <div class="property-list" id="propertyList">
+                <!-- Property cards will be generated here -->
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // Property data
+        const properties = [
+            {
+                id: 1,
+                title: "Modern City Apartment",
+                description: "Luxury 2-bedroom apartment in city center",
+                type: "apartment",
+                price: "$120/night",
+                image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+                amenities: ["Kitchen", "Laundry", "Parking", "WiFi", "Air Conditioning"],
+                location: "Lusaka CBD",
+                attractions: ["Manda Hill Mall - 2km", "Levy Junction - 3km", "Zambia National Museum - 1.5km"]
+            },
+            {
+                id: 2,
+                title: "Grand Hotel Lusaka",
+                description: "5-star luxury hotel with premium amenities",
+                type: "hotel",
+                price: "$220/night",
+                image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+                amenities: ["Spa", "Pool", "Restaurant", "Conference Room", "24/7 Room Service"],
+                location: "Longacres, Lusaka",
+                attractions: ["Arcades Shopping Mall - 0.5km", "Levy Golf Course - 2km", "Zambia National Assembly - 3km"]
+            },
+            {
+                id: 3,
+                title: "Wilderness Safari Lodge",
+                description: "Authentic lodge in the heart of nature",
+                type: "lodge",
+                price: "$180/night",
+                image: "https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+                amenities: ["Fireplace", "Guided Tours", "Wildlife Viewing", "Restaurant", "Bar"],
+                location: "South Luangwa National Park",
+                attractions: ["Luangwa River - 0.2km", "Game Drive Starting Point - 1km", "Local Village - 5km"]
+            },
+            {
+                id: 4,
+                title: "Cozy Studio Apartment",
+                description: "Compact studio perfect for solo travelers",
+                type: "apartment",
+                price: "$85/night",
+                image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+                amenities: ["Kitchenette", "WiFi", "Parking", "TV", "Workspace"],
+                location: "Woodlands, Lusaka",
+                attractions: ["East Park Mall - 1.5km", "University of Zambia - 3km", "Kalimba Reptile Park - 10km"]
+            },
+            {
+                id: 5,
+                title: "Business Hotel Suite",
+                description: "Executive suite for business travelers",
+                type: "hotel",
+                price: "$190/night",
+                image: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+                amenities: ["Business Center", "Gym", "Airport Shuttle", "Breakfast Included", "Meeting Rooms"],
+                location: "Kabulonga, Lusaka",
+                attractions: ["Dutch Reformed Church - 0.5km", "Kalimba Farms - 4km", "Lusaka Golf Club - 2km"]
+            },
+            {
+                id: 6,
+                title: "Riverside Eco-Lodge",
+                description: "Sustainable lodge with river views",
+                type: "lodge",
+                price: "$150/night",
+                image: "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+                amenities: ["Solar Power", "Organic Garden", "Canoeing", "Bird Watching", "Campfire Area"],
+                location: "Kafue River",
+                attractions: ["Kafue National Park - 15km", "Fishing Spots - 0.1km", "Local Craft Market - 3km"]
+            }
+        ];
+        
+        // Category-specific amenities
+        const categoryAmenities = {
+            apartment: ["Kitchen", "Laundry", "Parking", "WiFi", "Living Area"],
+            hotel: ["Pool", "Spa", "Restaurant", "24/7 Concierge", "Room Service"],
+            lodge: ["Nature Views", "Guided Tours", "Campfire", "Wildlife", "Restaurant"]
+        };
+        
+        // DOM elements
+        const propertyList = document.getElementById('propertyList');
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        
+        // Initialize with all properties
+        renderProperties(properties);
+        
+        // Add event listeners to category buttons
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Update active button
+                categoryButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Filter properties
+                const category = button.getAttribute('data-category');
+                let filteredProperties;
+                
+                if (category === 'all') {
+                    filteredProperties = properties;
+                } else {
+                    filteredProperties = properties.filter(property => property.type === category);
+                }
+                
+                // Render filtered properties
+                renderProperties(filteredProperties);
+            });
+        });
+        
+        // Function to render properties
+        function renderProperties(propertiesToRender) {
+            propertyList.innerHTML = '';
+            
+            propertiesToRender.forEach(property => {
+                const propertyCard = document.createElement('div');
+                propertyCard.className = 'property-card fade-in';
+                
+                // Get amenities for this property type
+                const amenities = categoryAmenities[property.type] || property.amenities;
+                
+                propertyCard.innerHTML = `
+                    <div class="property-image-container">
+                        <img src="${property.image}" alt="${property.title}" class="property-image">
+                        <div class="price-overlay">${property.price}</div>
+                        <div class="property-title">
+                            <h2>${property.title}</h2>
+                            <p>${property.description}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="property-details">
+                        <div class="amenities-section">
+                            <div class="section-title">
+                                <i class="fas fa-home"></i>
+                                <span>Amenities</span>
+                            </div>
+                            <div class="amenities-list">
+                                ${amenities.map(amenity => `
+                                    <div class="amenity-item">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>${amenity}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <div class="map-section">
+                            <div class="section-title">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Location</span>
+                            </div>
+                            <div class="mini-map">
+                                <div class="map-placeholder">
+                                    <i class="fas fa-map"></i>
+                                    <span>Map of ${property.location}</span>
+                                </div>
+                            </div>
+                            <div class="map-address">
+                                <i class="fas fa-location-dot"></i> ${property.location}
+                            </div>
+                        </div>
+                        
+                        <div class="attractions-section">
+                            <div class="section-title">
+                                <i class="fas fa-umbrella-beach"></i>
+                                <span>Nearby Attractions</span>
+                            </div>
+                            <div class="attractions-list">
+                                ${property.attractions.map(attraction => `
+                                    <div class="attraction-item">${attraction}</div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="cta-section">
+                        <button class="book-btn" onclick="bookProperty(${property.id})">
+                            <i class="fas fa-calendar-check"></i>
+                            Book Now
+                        </button>
+                    </div>
+                `;
+                
+                propertyList.appendChild(propertyCard);
+            });
+        }
+        
+        // Function to handle booking
+        function bookProperty(propertyId) {
+            const property = properties.find(p => p.id === propertyId);
+            alert(`Booking ${property.title} for ${property.price}! In a real app, this would redirect to a booking page.`);
+        }
+        
+        // Simulate loading animation
+        window.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.property-card').forEach(card => {
+                card.classList.add('fade-in');
+            });
+        });
+    </script>
+</body>
+</html>

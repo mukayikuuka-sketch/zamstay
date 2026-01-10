@@ -1,0 +1,179 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - ZamReach</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar { background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%); }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar w-64 text-white p-6">
+            <div class="flex items-center mb-8">
+                <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
+                    <i class="fas fa-chart-network text-white"></i>
+                </div>
+                <h1 class="text-2xl font-bold">ZamReach</h1>
+            </div>
+            <p class="text-gray-400 mb-8 text-sm">Account Settings & Preferences</p>
+            
+                        <nav>
+                <h2 class="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-4">Home</h2>
+                <ul class="space-y-2">
+                    <li><a href="/" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-tachometer-alt mr-3"></i> Dashboard</a></li>
+                    <li><a href="/map/" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-map-marked-alt mr-3"></i> Map</a></li>
+                    <li><a href="/analytics/" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-chart-line mr-3"></i> Analytics</a></li>
+                    <li><a href="/promotions/" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-bullhorn mr-3"></i> Promotions</a></li>
+                    <li><a href="/profile/" class="flex items-center p-3 bg-gray-700 rounded-lg transition"><i class="fas fa-user-circle mr-3"></i> Profile</a></li>
+                </ul>
+            </nav>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto p-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Account Profile</h1>
+            <p class="text-gray-600 mb-8">Manage your account settings and preferences</p>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left Column - Profile Info -->
+                <div class="lg:col-span-2 space-y-8">
+                    <!-- Personal Information -->
+                    <div class="bg-white rounded-xl shadow p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-6">Personal Information</h2>
+                        <form id="personal-form">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                                    <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-2" value="Administrator" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                    <input type="email" class="w-full border border-gray-300 rounded-lg px-4 py-2" value="admin@zamreach.com" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                                    <input type="tel" class="w-full border border-gray-300 rounded-lg px-4 py-2" value="+260 123 456 789">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                                    <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-50" value="System Administrator" disabled>
+                                </div>
+                            </div>
+                            <div class="flex justify-end">
+                                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                    <i class="fas fa-save mr-2"></i>Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Company Information -->
+                    <div class="bg-white rounded-xl shadow p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-6">Company Information</h2>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                                <div>
+                                    <div class="font-medium">Business Name</div>
+                                    <div class="text-gray-600">ZamReach Enterprises Ltd.</div>
+                                </div>
+                                <button class="text-blue-600 hover:text-blue-800">Edit</button>
+                            </div>
+                            <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                                <div>
+                                    <div class="font-medium">Industry</div>
+                                    <div class="text-gray-600">Business Analytics & Marketing</div>
+                                </div>
+                                <button class="text-blue-600 hover:text-blue-800">Edit</button>
+                            </div>
+                            <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                                <div>
+                                    <div class="font-medium">Location</div>
+                                    <div class="text-gray-600">Lusaka, Zambia</div>
+                                </div>
+                                <button class="text-blue-600 hover:text-blue-800">Edit</button>
+                            </div>
+                            <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                                <div>
+                                    <div class="font-medium">Subscription Plan</div>
+                                    <div class="text-gray-600">Pro Plan â€¢ $49/month</div>
+                                </div>
+                                <button class="text-blue-600 hover:text-blue-800">Upgrade</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Security -->
+                    <div class="bg-white rounded-xl shadow p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-6">Security</h2>
+                        <div class="space-y-4">
+                            <button id="change-password-btn" class="w-full flex justify-between items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+                                <div>
+                                    <div class="font-medium">Change Password</div>
+                                    <div class="text-gray-600">Last changed 30 days ago</div>
+                                </div>
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                            <button class="w-full flex justify-between items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+                                <div>
+                                    <div class="font-medium">Two-Factor Authentication</div>
+                                    <div class="text-gray-600">Not enabled</div>
+                                </div>
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                            <button class="w-full flex justify-between items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 text-red-600">
+                                <div>
+                                    <div class="font-medium">Log Out All Devices</div>
+                                    <div class="text-red-400">Sign out from all active sessions</div>
+                                </div>
+                                <i class="fas fa-sign-out-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Column - Profile Card & Notifications -->
+                <div class="space-y-8">
+                    <!-- Profile Card -->
+                    <div class="bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl shadow p-6 text-white">
+                        <div class="flex flex-col items-center text-center">
+                            <div class="w-24 h-24 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-4">
+                                <i class="fas fa-user text-4xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">Administrator</h3>
+                            <p class="text-purple-100 mt-1">admin@zamreach.com</p>
+                            <div class="mt-4 px-4 py-2 bg-white bg-opacity-20 rounded-full">
+                                <i class="fas fa-crown mr-2"></i>System Administrator
+                            </div>
+                            <p class="mt-6 text-sm text-purple-100">Member since January 2025</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Notification Preferences -->
+                    <div class="bg-white rounded-xl shadow p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-6">Notification Preferences</h2>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="font-medium">Email Notifications</div>
+                                    <div class="text-gray-600">Receive updates via email</div>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[""] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                </label>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="font-medium">SMS Alerts</div>
+                                    <div class="text-gray-600">Important alerts via SMS</div>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer">
+                                     <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content
+

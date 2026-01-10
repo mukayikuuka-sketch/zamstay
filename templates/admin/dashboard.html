@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>dashboard.html</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            padding: 40px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { 
+            color: #333; 
+            border-bottom: 3px solid #667eea; 
+            padding-bottom: 15px;
+            margin-top: 0;
+        }
+        .success-badge {
+            background: #48bb78;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .template-info {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 25px 0;
+            border-left: 5px solid #4299e1;
+        }
+        .url-list {
+            background: #edf2f7;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 25px 0;
+        }
+        .url-list li {
+            margin: 10px 0;
+            padding: 8px;
+            background: white;
+            border-radius: 5px;
+            border: 1px solid #e2e8f0;
+        }
+        .test-button {
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 5px;
+        }
+        .test-button:hover {
+            background: #5a67d8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-badge">✅ SUCCESS! Dashboard Issue FIXED!</div>
+        
+        <h1>dashboard.html</h1>
+        
+        <div class="template-info">
+            <p><strong>📄 Template Path:</strong> admin/dashboard.html</p>
+            <p><strong>🎯 Purpose:</strong> This is a placeholder template</p>
+            <p><strong>✅ Status:</strong> URL routing is now working correctly!</p>
+        </div>
+        
+        <h2>🎉 The Problem Has Been Fixed!</h2>
+        <p>Previously, ALL URLs showed the same dashboard. Now each URL shows its own template:</p>
+        
+        <div class="url-list">
+            <h3>Test These URLs in Your Browser:</h3>
+            <ul>
+                <li><strong>Home:</strong> http://127.0.0.1:8000/</li>
+                <li><strong>Demo:</strong> http://127.0.0.1:8000/demo/</li>
+                <li><strong>Owner Dashboard:</strong> http://127.0.0.1:8000/owner/dashboard/</li>
+                <li><strong>Admin Dashboard:</strong> http://127.0.0.1:8000/admin/dashboard/</li>
+                <li><strong>Customer Dashboard:</strong> http://127.0.0.1:8000/dashboard/</li>
+                <li><strong>Signup:</strong> http://127.0.0.1:8000/signup/</li>
+                <li><strong>Login:</strong> http://127.0.0.1:8000/login/</li>
+            </ul>
+        </div>
+        
+        <h2>What Was Fixed:</h2>
+        <ol>
+            <li>✅ Updated <code>zamreach/urls.py</code> to use <code>include('bookings.urls')</code></li>
+            <li>✅ Added missing view functions to <code>bookings/views.py</code></li>
+            <li>✅ Created missing template files</li>
+            <li>✅ Each URL now routes to its own view and template</li>
+        </ol>
+        
+        <h2>Next Steps:</h2>
+        <p>Replace this placeholder with your actual template content.</p>
+        
+        <div>
+            <a href="http://127.0.0.1:8000/" class="test-button">Test Home Page</a>
+            <a href="http://127.0.0.1:8000/demo/" class="test-button">Test Demo Page</a>
+            <a href="http://127.0.0.1:8000/owner/dashboard/" class="test-button">Test Owner Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

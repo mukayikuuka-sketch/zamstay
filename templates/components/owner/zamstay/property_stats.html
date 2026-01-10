@@ -1,0 +1,38 @@
+﻿<!-- components/owner/zamstay/property_stats.html -->
+<div class="zamstay-stats">
+    <h3 style="margin-bottom: 15px; color: #2c3e50; display: flex; align-items: center; gap: 10px;">
+        <i class="fas fa-home" style="color: #3498db;"></i>
+        ZamStay Property Stats
+    </h3>
+    
+    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+        <div class="stat-item" style="background: #e8f4fc; padding: 12px; border-radius: 8px;">
+            <div style="font-size: 20px; font-weight: bold; color: #3498db;">{{ zamstay_properties|default:"12" }}</div>
+            <div style="font-size: 12px; color: #7f8c8d;">Total Properties</div>
+        </div>
+        
+        <div class="stat-item" style="background: #e8f6ef; padding: 12px; border-radius: 8px;">
+            <div style="font-size: 20px; font-weight: bold; color: #27ae60;">{{ zamstay_bookings|default:"8" }}</div>
+            <div style="font-size: 12px; color: #7f8c8d;">Active Bookings</div>
+        </div>
+        
+        <div class="stat-item" style="background: #fef9e7; padding: 12px; border-radius: 8px;">
+            <div style="font-size: 20px; font-weight: bold; color: #f39c12;">${{ zamstay_revenue|default:"4,850" }}</div>
+            <div style="font-size: 12px; color: #7f8c8d;">Monthly Revenue</div>
+        </div>
+        
+        <div class="stat-item" style="background: #fbeeea; padding: 12px; border-radius: 8px;">
+            <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">{{ zamstay_occupancy|default:"78" }}%</div>
+            <div style="font-size: 12px; color: #7f8c8d;">Occupancy Rate</div>
+        </div>
+    </div>
+    
+    <div style="margin-top: 15px;">
+        <a href="/zamstay/properties/" class="btn" style="background: #3498db; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 14px;">
+            <i class="fas fa-external-link-alt"></i> Manage Properties
+        </a>
+        <a href="/guest/" class="btn" style="background: #2c3e50; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 14px; margin-left: 10px;">
+            <i class="fas fa-eye"></i> View Guest Portal
+        </a>
+    </div>
+</div>

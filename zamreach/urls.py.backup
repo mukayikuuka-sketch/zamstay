@@ -1,0 +1,45 @@
+﻿from django.contrib import admin
+from django.urls import path, include
+from django.views.generic import TemplateView
+from django.http import HttpResponse
+from django.conf import settings
+from django.conf.urls.static import static
+from django.views.generic.base import RedirectView
+
+def static_directory_view(request):
+    return HttpResponse("Static files at /static/", content_type='text/plain')
+
+urlpatterns = [
+    # Django Admin
+    path('admin/', admin.site.urls),
+
+    # Your existing API endpoints
+    path('api/', include('api.urls')),
+
+    # Business Ads API (SIMPLIFIED)
+    path('api/business/', include('business_ads.urls')),
+
+    # Static directory info
+    path('static/', static_directory_view, name='static_directory'),
+
+    # FAVICON - must come before catch-all
+    path('favicon.ico', RedirectView.as_view(url='/static/favicon.ico', permanent=True)),
+
+    # Pages
+    path('map/', TemplateView.as_view(template_name='map.html'), name='map'),
+    path('analytics/', TemplateView.as_view(template_name='analytics.html'), name='analytics'),
+    path('promotions/', TemplateView.as_view(template_name='promotions.html'), name='promotions'),
+    path('profile/', TemplateView.as_view(template_name='profile.html'), name='profile'),
+
+    # Root URL - dashboard
+    path('', TemplateView.as_view(template_name='index.html'), name='home'),
+]
+
+# Catch-all for SPA (MUST BE LAST)
+urlpatterns.append(
+    path('<path:route>', TemplateView.as_view(template_name='index.html'))
+)
+
+# Serve static files in development
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

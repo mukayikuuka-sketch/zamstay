@@ -1,0 +1,825 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZamStay - Find Your Stay in Zambia</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        .utility-badge { 
+            display: inline-flex; 
+            align-items: center; 
+            padding: 4px 12px; 
+            border-radius: 20px; 
+            font-size: 0.875rem; 
+            font-weight: 500; 
+            margin: 2px 4px 2px 0; 
+        }
+        .solar-badge { background-color: rgba(34, 197, 94, 0.15); color: #16a34a; }
+        .water-badge { background-color: rgba(6, 182, 212, 0.15); color: #0891b2; }
+        .backup-badge { background-color: rgba(168, 85, 247, 0.15); color: #9333ea; }
+        .verified-badge { background-color: rgba(59, 130, 246, 0.15); color: #2563eb; }
+        .hotel-badge { background-color: rgba(239, 68, 68, 0.15); color: #dc2626; }
+        .apartment-badge { background-color: rgba(245, 158, 11, 0.15); color: #d97706; }
+        .lodge-badge { background-color: rgba(16, 185, 129, 0.15); color: #059669; }
+        
+        .property-card {
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+        .property-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .search-box {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .filter-pill.active {
+            background-color: #059669;
+            color: white;
+        }
+        
+        .attraction-card {
+            transition: all 0.3s ease;
+        }
+        .attraction-card:hover {
+            transform: translateX(5px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Top Navigation -->
+    <div class="bg-white shadow-sm sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-lg flex items-center justify-center mr-2">
+                        <i class="fas fa-building text-white"></i>
+                    </div>
+                    <h1 class="text-xl font-bold text-gray-900">ZAMSTAY</h1>
+                    <span class="ml-2 px-2 py-1 bg-emerald-100 text-emerald-800 text-xs rounded-full">GUEST</span>
+                </div>
+                
+                <!-- User Menu -->
+                <div class="flex items-center space-x-4">
+                    <button id="switch-to-owner" class="px-4 py-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white rounded-lg hover:opacity-90 transition text-sm">
+                        <i class="fas fa-exchange-alt mr-2"></i>Switch to Owner
+                    </button>
+                    <a href="/guest/trips/" class="p-2 text-gray-600 hover:text-gray-900 relative">
+                        <i class="fas fa-suitcase text-lg"></i>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">2</span>
+                    </a>
+                    <a href="/guest/saved/" class="p-2 text-gray-600 hover:text-gray-900">
+                        <i class="fas fa-heart text-lg"></i>
+                    </a>
+                    <button class="p-2 text-gray-600 hover:text-gray-900">
+                        <i class="fas fa-user-circle text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hero Section with Advanced Search -->
+    <div class="relative bg-gradient-to-r from-emerald-600 to-cyan-600">
+        <div class="absolute inset-0 bg-black opacity-20"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="text-center text-white mb-8">
+                <h1 class="text-3xl md:text-4xl font-bold mb-4">Find Your Perfect Stay in Zambia</h1>
+                <p class="text-lg text-emerald-100">Book verified properties with guaranteed power & water backup</p>
+            </div>
+            
+            <!-- Advanced Search Box -->
+            <div class="search-box rounded-2xl p-6 max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4">
+                    <!-- Destination -->
+                    <div class="md:col-span-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="fas fa-map-marker-alt mr-2"></i>Destination
+                        </label>
+                        <select id="destination-select" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option value="">All Zambia</option>
+                            <option value="lusaka" selected>Lusaka</option>
+                            <option value="livingstone">Livingstone (Victoria Falls)</option>
+                            <option value="ndola">Ndola</option>
+                            <option value="kitwe">Kitwe</option>
+                            <option value="kabwe">Kabwe</option>
+                            <option value="chipata">Chipata</option>
+                            <option value="solwezi">Solwezi</option>
+                            <option value="mongu">Mongu</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Property Type -->
+                    <div class="md:col-span-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="fas fa-building mr-2"></i>Property Type
+                        </label>
+                        <select id="property-type-select" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option value="all">All Types</option>
+                            <option value="hotel">Hotels</option>
+                            <option value="apartment">Apartments</option>
+                            <option value="lodge">Lodges</option>
+                            <option value="guesthouse">Guest Houses</option>
+                            <option value="villa">Villas</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Dates -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="fas fa-calendar-alt mr-2"></i>Check-in
+                        </label>
+                        <input type="date" id="checkin-date" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500" value="2026-01-10">
+                    </div>
+                    
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="fas fa-calendar-alt mr-2"></i>Check-out
+                        </label>
+                        <input type="date" id="checkout-date" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500" value="2026-01-12">
+                    </div>
+                    
+                    <!-- Guests -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="fas fa-user-friends mr-2"></i>Guests
+                        </label>
+                        <select id="guests-select" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option>1 Adult</option>
+                            <option selected>2 Adults</option>
+                            <option>3 Adults</option>
+                            <option>4 Adults</option>
+                            <option>Family (2+2)</option>
+                            <option>Group (6+)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Quick Filters -->
+                <div class="mb-4">
+                    <div class="flex flex-wrap gap-2">
+                        <button class="filter-pill px-4 py-2 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition active">
+                            <i class="fas fa-bolt mr-2"></i>Loadshedding Proof
+                        </button>
+                        <button class="filter-pill px-4 py-2 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition">
+                            <i class="fas fa-sun mr-2"></i>Solar Ready
+                        </button>
+                        <button class="filter-pill px-4 py-2 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition">
+                            <i class="fas fa-tint mr-2"></i>Borehole Water
+                        </button>
+                        <button class="filter-pill px-4 py-2 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition">
+                            <i class="fas fa-wifi mr-2"></i>High-Speed WiFi
+                        </button>
+                        <button class="filter-pill px-4 py-2 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition">
+                            <i class="fas fa-swimming-pool mr-2"></i>Swimming Pool
+                        </button>
+                        <button class="filter-pill px-4 py-2 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition">
+                            <i class="fas fa-utensils mr-2"></i>Restaurant
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Search Button -->
+                <div class="flex justify-between items-center">
+                    <div class="text-sm text-gray-600">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <span id="property-count">42</span> properties match your criteria
+                    </div>
+                    <button id="search-button" class="px-8 py-3 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white font-semibold rounded-lg hover:opacity-90 transition flex items-center">
+                        <i class="fas fa-search mr-2"></i>Search Properties
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Results Section -->
+        <div class="mb-12">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Properties in <span id="location-display">Lusaka</span></h2>
+                    <p class="text-gray-600">Showing <span id="showing-count">6</span> of <span id="total-count">42</span> properties</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <select class="border border-gray-300 rounded-lg px-4 py-2">
+                        <option>Sort by: Recommended</option>
+                        <option>Price: Low to High</option>
+                        <option>Price: High to Low</option>
+                        <option>Rating: Highest First</option>
+                        <option>Distance to Center</option>
+                    </select>
+                    <button id="map-view" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                        <i class="fas fa-map mr-2"></i>Map View
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Properties Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left Column - Properties -->
+                <div class="lg:col-span-2">
+                    <div id="properties-container" class="space-y-6">
+                        <!-- Property cards will be loaded here dynamically -->
+                    </div>
+                    
+                    <!-- Load More -->
+                    <div class="mt-8 text-center">
+                        <button id="load-more" class="px-6 py-3 border-2 border-emerald-600 text-emerald-600 font-semibold rounded-lg hover:bg-emerald-50 transition">
+                            <i class="fas fa-sync-alt mr-2"></i>Load More Properties
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Right Column - Map & Filters -->
+                <div class="space-y-6">
+                    <!-- Map Preview -->
+                    <div class="bg-white rounded-xl shadow p-6">
+                        <h3 class="font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-map-marked-alt mr-2 text-emerald-600"></i>Map View
+                        </h3>
+                        <div class="bg-gray-200 h-48 rounded-lg flex items-center justify-center mb-4">
+                            <i class="fas fa-map text-4xl text-gray-400"></i>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-4">Interactive map showing all available properties</p>
+                        <button class="w-full px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition">
+                            Open Interactive Map
+                        </button>
+                    </div>
+                    
+                    <!-- Price Range -->
+                    <div class="bg-white rounded-xl shadow p-6">
+                        <h3 class="font-bold text-gray-800 mb-4">Price Range (per night)</h3>
+                        <div class="mb-4">
+                            <input type="range" min="0" max="5000" value="2500" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" id="price-slider">
+                            <div class="flex justify-between text-sm text-gray-600 mt-2">
+                                <span>K0</span>
+                                <span>K2,500</span>
+                                <span>K5,000+</span>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <span class="text-lg font-bold text-emerald-700" id="price-display">K2,500</span>
+                            <span class="text-gray-600"> max per night</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Local Attractions -->
+                    <div class="bg-white rounded-xl shadow p-6">
+                        <h3 class="font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-landmark mr-2 text-blue-600"></i>Local Attractions
+                        </h3>
+                        <div id="attractions-container" class="space-y-3">
+                            <!-- Attractions will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Property Type Breakdown -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Browse by Property Type</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="bg-gradient-to-br from-red-500 to-red-600 text-white rounded-xl p-6 text-center hover:shadow-lg transition cursor-pointer" data-type="hotel">
+                    <i class="fas fa-hotel text-4xl mb-4"></i>
+                    <h3 class="font-bold text-xl mb-2">Hotels</h3>
+                    <p class="text-red-100">24 properties</p>
+                    <p class="text-sm mt-2">From K850/night</p>
+                </div>
+                <div class="bg-gradient-to-br from-amber-500 to-amber-600 text-white rounded-xl p-6 text-center hover:shadow-lg transition cursor-pointer" data-type="apartment">
+                    <i class="fas fa-home text-4xl mb-4"></i>
+                    <h3 class="font-bold text-xl mb-2">Apartments</h3>
+                    <p class="text-amber-100">18 properties</p>
+                    <p class="text-sm mt-2">From K650/night</p>
+                </div>
+                <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-xl p-6 text-center hover:shadow-lg transition cursor-pointer" data-type="lodge">
+                    <i class="fas fa-campground text-4xl mb-4"></i>
+                    <h3 class="font-bold text-xl mb-2">Lodges</h3>
+                    <p class="text-emerald-100">12 properties</p>
+                    <p class="text-sm mt-2">From K1,200/night</p>
+                </div>
+                <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl p-6 text-center hover:shadow-lg transition cursor-pointer" data-type="all">
+                    <i class="fas fa-building text-4xl mb-4"></i>
+                    <h3 class="font-bold text-xl mb-2">All Properties</h3>
+                    <p class="text-purple-100">54 properties</p>
+                    <p class="text-sm mt-2">View all options</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="bg-gray-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <p>&copy; 2026 ZamStay. All rights reserved.</p>
+                <p class="text-gray-400 text-sm mt-2">Find your perfect stay across Zambia</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script>
+        // Property Data
+        const properties = [
+            {
+                id: 1,
+                name: 'Riverside Executive Hotel',
+                type: 'hotel',
+                rating: 4.9,
+                reviews: 128,
+                location: 'Longacres, Lusaka',
+                distance: '1.2km from city center',
+                utilities: ['solar', 'water', 'backup', 'verified'],
+                amenities: ['wifi', 'pool', 'restaurant', 'gym', 'spa'],
+                price: 850,
+                originalPrice: 1200,
+                badge: 'FLASH SALE',
+                description: 'Luxury hotel with full power backup and premium amenities',
+                imageColor: 'from-emerald-100 to-cyan-100',
+                iconColor: 'text-emerald-400',
+                attractions: [
+                    {name: 'Manda Hill Mall', distance: '1.4km', icon: 'shopping-cart'},
+                    {name: 'National Museum', distance: '2.1km', icon: 'landmark'},
+                    {name: 'Lusaka Golf Club', distance: '3.2km', icon: 'golf-ball'}
+                ]
+            },
+            {
+                id: 2,
+                name: 'City View Apartments',
+                type: 'apartment',
+                rating: 4.7,
+                reviews: 94,
+                location: 'CBD, Lusaka',
+                distance: 'In city center',
+                utilities: ['solar', 'backup', 'verified'],
+                amenities: ['wifi', 'parking', 'kitchen', 'laundry'],
+                price: 650,
+                originalPrice: null,
+                badge: 'BEST VALUE',
+                description: 'Modern apartments with solar backup and city views',
+                imageColor: 'from-blue-100 to-purple-100',
+                iconColor: 'text-blue-400',
+                attractions: [
+                    {name: 'East Park Mall', distance: '0.8km', icon: 'shopping-cart'},
+                    {name: 'Levy Mall', distance: '2.3km', icon: 'shopping-bag'},
+                    {name: 'Arcades Shopping', distance: '3.1km', icon: 'store'}
+                ]
+            },
+            {
+                id: 3,
+                name: 'Safari Wilderness Lodge',
+                type: 'lodge',
+                rating: 4.8,
+                reviews: 76,
+                location: 'Livingstone',
+                distance: '5km from Victoria Falls',
+                utilities: ['solar', 'water', 'verified'],
+                amenities: ['wifi', 'pool', 'restaurant', 'tour-desk'],
+                price: 1200,
+                originalPrice: 1850,
+                badge: 'POPULAR',
+                description: 'Authentic safari experience with full amenities',
+                imageColor: 'from-green-100 to-emerald-100',
+                iconColor: 'text-green-400',
+                attractions: [
+                    {name: 'Victoria Falls', distance: '5.0km', icon: 'water'},
+                    {name: 'Livingstone Museum', distance: '3.2km', icon: 'landmark'},
+                    {name: 'Mosi-oa-Tunya Park', distance: '6.5km', icon: 'tree'}
+                ]
+            },
+            {
+                id: 4,
+                name: 'Garden Suites Hotel',
+                type: 'hotel',
+                rating: 4.6,
+                reviews: 112,
+                location: 'Woodlands, Lusaka',
+                distance: '2.5km from center',
+                utilities: ['solar', 'water'],
+                amenities: ['wifi', 'garden', 'restaurant', 'bar'],
+                price: 950,
+                originalPrice: 1100,
+                badge: 'ECO-FRIENDLY',
+                description: 'Peaceful garden hotel with rainwater harvesting',
+                imageColor: 'from-yellow-100 to-amber-100',
+                iconColor: 'text-yellow-400',
+                attractions: [
+                    {name: 'Kalimba Reptile Park', distance: '8.2km', icon: 'paw'},
+                    {name: 'Chaminuka Game Reserve', distance: '15km', icon: 'mountain'},
+                    {name: 'Lilayi Elephant Nursery', distance: '12km', icon: 'elephant'}
+                ]
+            },
+            {
+                id: 5,
+                name: 'Executive Apartments',
+                type: 'apartment',
+                rating: 4.5,
+                reviews: 88,
+                location: 'Kabulonga, Lusaka',
+                distance: '3.1km from center',
+                utilities: ['solar', 'backup', 'verified'],
+                amenities: ['wifi', 'parking', 'kitchen', 'gym', 'pool'],
+                price: 750,
+                originalPrice: 900,
+                badge: 'BUSINESS READY',
+                description: 'Executive apartments with meeting facilities',
+                imageColor: 'from-purple-100 to-pink-100',
+                iconColor: 'text-purple-400',
+                attractions: [
+                    {name: 'Zambia National Assembly', distance: '2.8km', icon: 'building'},
+                    {name: 'State House', distance: '3.5km', icon: 'monument'},
+                    {name: 'University of Zambia', distance: '4.2km', icon: 'university'}
+                ]
+            },
+            {
+                id: 6,
+                name: 'Riverfront Lodge',
+                type: 'lodge',
+                rating: 4.9,
+                reviews: 65,
+                location: 'Kafue River',
+                distance: 'Riverside location',
+                utilities: ['solar', 'water', 'backup'],
+                amenities: ['wifi', 'fishing', 'boat', 'restaurant'],
+                price: 1500,
+                originalPrice: 2000,
+                badge: 'LUXURY',
+                description: 'Premium riverfront lodge with fishing and boating',
+                imageColor: 'from-cyan-100 to-blue-100',
+                iconColor: 'text-cyan-400',
+                attractions: [
+                    {name: 'Kafue River', distance: 'On site', icon: 'water'},
+                    {name: 'Bird Watching', distance: 'On site', icon: 'dove'},
+                    {name: 'Fishing Spots', distance: 'On site', icon: 'fish'}
+                ]
+            }
+        ];
+
+        // Current filters
+        let currentFilters = {
+            type: 'all',
+            location: 'lusaka',
+            price: 2500,
+            utilities: []
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProperties();
+            loadAttractions();
+            setupEventListeners();
+            showNotification('Welcome to ZamStay! Use filters to find your perfect stay.');
+        });
+
+        // Load properties based on filters
+        function loadProperties() {
+            const container = document.getElementById('properties-container');
+            container.innerHTML = '';
+            
+            let filtered = properties.filter(p => {
+                // Filter by type
+                if (currentFilters.type !== 'all' && p.type !== currentFilters.type) return false;
+                
+                // Filter by location (simplified)
+                if (currentFilters.location !== 'all') {
+                    // In real app, this would check actual location
+                    if (currentFilters.location === 'lusaka' && !p.location.toLowerCase().includes('lusaka')) return false;
+                    if (currentFilters.location === 'livingstone' && !p.location.toLowerCase().includes('livingstone')) return false;
+                }
+                
+                // Filter by price
+                if (p.price > currentFilters.price) return false;
+                
+                return true;
+            });
+            
+            // Update counts
+            document.getElementById('property-count').textContent = filtered.length;
+            document.getElementById('showing-count').textContent = Math.min(6, filtered.length);
+            document.getElementById('total-count').textContent = filtered.length;
+            
+            // Display properties
+            filtered.slice(0, 6).forEach(property => {
+                const propertyCard = createPropertyCard(property);
+                container.appendChild(propertyCard);
+            });
+            
+            // Update location display
+            const locationSelect = document.getElementById('destination-select');
+            const selectedOption = locationSelect.options[locationSelect.selectedIndex];
+            document.getElementById('location-display').textContent = selectedOption.text;
+        }
+
+        // Create property card HTML
+        function createPropertyCard(property) {
+            const div = document.createElement('div');
+            div.className = 'property-card bg-white rounded-xl overflow-hidden';
+            div.innerHTML = `
+                <div class="md:flex">
+                    <!-- Image/Icon Area -->
+                    <div class="md:w-1/3 ${property.imageColor} flex items-center justify-center p-8">
+                        <i class="fas fa-${property.type === 'hotel' ? 'hotel' : property.type === 'apartment' ? 'home' : 'campground'} ${property.iconColor} text-6xl"></i>
+                    </div>
+                    
+                    <!-- Details Area -->
+                    <div class="md:w-2/3 p-6">
+                        <!-- Header -->
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="font-bold text-xl text-gray-900">${property.name}</h3>
+                                <div class="flex items-center mt-1">
+                                    <span class="${getTypeBadgeClass(property.type)}">${property.type.charAt(0).toUpperCase() + property.type.slice(1)}</span>
+                                    <span class="mx-2 text-gray-300">•</span>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                        <span class="font-bold">${property.rating}</span>
+                                        <span class="text-gray-500 text-sm ml-1">(${property.reviews} reviews)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="px-2 py-1 bg-red-500 text-white text-xs font-semibold rounded">${property.badge}</span>
+                        </div>
+                        
+                        <!-- Location -->
+                        <p class="text-gray-600 text-sm mb-3">
+                            <i class="fas fa-map-marker-alt text-gray-400 mr-2"></i>${property.location} • ${property.distance}
+                        </p>
+                        
+                        <!-- Description -->
+                        <p class="text-gray-700 mb-4">${property.description}</p>
+                        
+                        <!-- Utility Badges -->
+                        <div class="mb-4">
+                            ${property.utilities.map(util => `
+                                <span class="${getUtilityBadgeClass(util)}">
+                                    <i class="fas fa-${getUtilityIcon(util)} mr-1"></i>${getUtilityLabel(util)}
+                                </span>
+                            `).join('')}
+                        </div>
+                        
+                        <!-- Amenities -->
+                        <div class="flex flex-wrap items-center text-gray-600 text-sm mb-4">
+                            ${property.amenities.slice(0, 4).map(amenity => `
+                                <div class="flex items-center mr-4 mb-1">
+                                    <i class="fas fa-${getAmenityIcon(amenity)} mr-1.5"></i>${amenity.charAt(0).toUpperCase() + amenity.slice(1)}
+                                </div>
+                            `).join('')}
+                            ${property.amenities.length > 4 ? '<div class="text-gray-500">+ more</div>' : ''}
+                        </div>
+                        
+                        <!-- Price & Action -->
+                        <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                            <div>
+                                <div class="text-sm text-gray-500">Starting from</div>
+                                <div class="flex items-baseline">
+                                    <span class="text-2xl font-bold text-emerald-700">K${property.price.toLocaleString()}</span>
+                                    <span class="text-gray-500 ml-1">/night</span>
+                                    ${property.originalPrice ? `
+                                        <span class="ml-2 text-sm text-gray-500 line-through">K${property.originalPrice.toLocaleString()}</span>
+                                        <span class="ml-2 text-sm text-emerald-600 font-medium">Save K${(property.originalPrice - property.price).toLocaleString()}</span>
+                                    ` : ''}
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1">Includes taxes & charges</div>
+                            </div>
+                            <button class="book-now-btn px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white font-semibold rounded-lg hover:opacity-90 transition" data-id="${property.id}">
+                                <i class="fas fa-calendar-check mr-2"></i>Book Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            return div;
+        }
+
+        // Load local attractions
+        function loadAttractions() {
+            const container = document.getElementById('attractions-container');
+            const location = document.getElementById('destination-select').value;
+            
+            // Sample attractions data (in real app, this would come from API)
+            let attractions = [];
+            if (location === 'lusaka') {
+                attractions = [
+                    {name: 'Manda Hill Mall', distance: '1.4km', icon: 'shopping-cart', type: 'shopping'},
+                    {name: 'National Museum', distance: '2.1km', icon: 'landmark', type: 'culture'},
+                    {name: 'Kalimba Reptile Park', distance: '8.2km', icon: 'paw', type: 'nature'},
+                    {name: 'Arcades Shopping', distance: '3.1km', icon: 'store', type: 'shopping'},
+                    {name: 'Lusaka Golf Club', distance: '3.2km', icon: 'golf-ball', type: 'sports'}
+                ];
+            } else if (location === 'livingstone') {
+                attractions = [
+                    {name: 'Victoria Falls', distance: '5.0km', icon: 'water', type: 'nature'},
+                    {name: 'Livingstone Museum', distance: '3.2km', icon: 'landmark', type: 'culture'},
+                    {name: 'Mosi-oa-Tunya Park', distance: '6.5km', icon: 'tree', type: 'nature'},
+                    {name: 'Zambezi River', distance: '2.1km', icon: 'water', type: 'nature'},
+                    {name: 'Craft Market', distance: '1.8km', icon: 'shopping-cart', type: 'shopping'}
+                ];
+            }
+            
+            container.innerHTML = attractions.map(attr => `
+                <div class="attraction-card p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-${attr.icon} text-blue-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-800">${attr.name}</div>
+                            <div class="text-sm text-gray-600">${attr.distance} away</div>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search button
+            document.getElementById('search-button').addEventListener('click', function() {
+                updateFilters();
+                loadProperties();
+                loadAttractions();
+                showNotification('Searching for properties...');
+            });
+
+            // Property type buttons
+            document.querySelectorAll('[data-type]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const type = this.getAttribute('data-type');
+                    document.getElementById('property-type-select').value = type;
+                    updateFilters();
+                    loadProperties();
+                    
+                    // Update active state
+                    document.querySelectorAll('[data-type]').forEach(b => {
+                        b.classList.remove('ring-2', 'ring-white');
+                    });
+                    this.classList.add('ring-2', 'ring-white');
+                });
+            });
+
+            // Filter pills
+            document.querySelectorAll('.filter-pill').forEach(pill => {
+                pill.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    this.classList.toggle('bg-gray-100');
+                    this.classList.toggle('text-gray-700');
+                    
+                    if (this.classList.contains('active')) {
+                        this.classList.add('bg-emerald-600', 'text-white');
+                    }
+                });
+            });
+
+            // Price slider
+            const priceSlider = document.getElementById('price-slider');
+            const priceDisplay = document.getElementById('price-display');
+            
+            priceSlider.addEventListener('input', function() {
+                const value = parseInt(this.value);
+                priceDisplay.textContent = 'K' + value.toLocaleString();
+                currentFilters.price = value;
+                loadProperties();
+            });
+
+            // Map view button
+            document.getElementById('map-view').addEventListener('click', function() {
+                showNotification('Opening interactive map view...');
+                // In real app, this would open a map modal
+            });
+
+            // Load more button
+            document.getElementById('load-more').addEventListener('click', function() {
+                showNotification('Loading more properties...');
+                // In real app, this would load next page
+                setTimeout(() => {
+                    showNotification('15 more properties loaded');
+                }, 1000);
+            });
+
+            // Book now buttons (delegated)
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('book-now-btn') || e.target.closest('.book-now-btn')) {
+                    const btn = e.target.classList.contains('book-now-btn') ? e.target : e.target.closest('.book-now-btn');
+                    const propertyId = btn.getAttribute('data-id');
+                    const property = properties.find(p => p.id == propertyId);
+                    showNotification(`Starting booking for ${property.name}...`);
+                    // In real app, this would redirect to booking page
+                }
+            });
+
+            // Switch to owner button
+            document.getElementById('switch-to-owner').addEventListener('click', function() {
+                showNotification('Switching to Owner Dashboard...');
+                setTimeout(() => {
+                    window.location.href = '/owner/';
+                }, 1000);
+            });
+        }
+
+        // Update filters from UI
+        function updateFilters() {
+            currentFilters.type = document.getElementById('property-type-select').value;
+            currentFilters.location = document.getElementById('destination-select').value;
+        }
+
+        // Helper functions
+        function getTypeBadgeClass(type) {
+            const classes = {
+                hotel: 'hotel-badge',
+                apartment: 'apartment-badge',
+                lodge: 'lodge-badge'
+            };
+            return `utility-badge ${classes[type] || 'verified-badge'}`;
+        }
+
+        function getUtilityBadgeClass(utility) {
+            const classes = {
+                solar: 'solar-badge',
+                water: 'water-badge',
+                backup: 'backup-badge',
+                verified: 'verified-badge'
+            };
+            return `utility-badge ${classes[utility] || 'verified-badge'}`;
+        }
+
+        function getUtilityIcon(utility) {
+            const icons = {
+                solar: 'sun',
+                water: 'tint',
+                backup: 'car-battery',
+                verified: 'shield-check'
+            };
+            return icons[utility] || 'check';
+        }
+
+        function getUtilityLabel(utility) {
+            const labels = {
+                solar: 'Solar Ready',
+                water: 'Borehole Water',
+                backup: 'Power Backup',
+                verified: 'Verified'
+            };
+            return labels[utility] || utility;
+        }
+
+        function getAmenityIcon(amenity) {
+            const icons = {
+                wifi: 'wifi',
+                pool: 'swimming-pool',
+                restaurant: 'utensils',
+                gym: 'dumbbell',
+                spa: 'spa',
+                parking: 'parking',
+                kitchen: 'kitchen-set',
+                laundry: 'tshirt',
+                'tour-desk': 'info-circle',
+                bar: 'glass-martini',
+                garden: 'tree',
+                fishing: 'fish',
+                boat: 'ship'
+            };
+            return icons[amenity] || 'check';
+        }
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            const bgColor = type === 'error' ? 'bg-red-600' : type === 'success' ? 'bg-green-600' : 'bg-blue-600';
+            
+            notification.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 translate-x-64 z-50`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-${type === 'error' ? 'exclamation-circle' : type === 'success' ? 'check-circle' : 'info-circle'} mr-3"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.remove('translate-x-64');
+                notification.classList.add('translate-x-0');
+            }, 10);
+            
+            setTimeout(() => {
+                notification.classList.remove('translate-x-0');
+                notification.classList.add('translate-x-64');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

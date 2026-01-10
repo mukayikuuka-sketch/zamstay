@@ -1,0 +1,13 @@
+﻿from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    
+    # Include bookings app URLs
+    path('', include('bookings.urls')),
+    
+    # You can also add other app URLs here if needed
+    # path('accounts/', include('accounts.urls')),
+    # path('business/', include('business_ads.urls')),
+]

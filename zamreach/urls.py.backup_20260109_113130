@@ -1,0 +1,23 @@
+﻿from django.contrib import admin
+from django.urls import path
+from django.shortcuts import render
+from django.views.generic import RedirectView
+
+def demo_dashboard(request):
+    """Unified dashboard for all roles"""
+    return render(request, "owner-dashboard.html")
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    
+    # ALL THESE PATHS WILL SHOW THE SAME UNIFIED DASHBOARD
+    path('owner/dashboard/', demo_dashboard, name='owner_dashboard'),
+    path('owner/', demo_dashboard, name='owner_home'),
+    path('demo/', demo_dashboard, name='demo_dashboard'),
+    path('', demo_dashboard, name='home'),  # Root URL
+    
+    # Add these redirects for any other common patterns
+    path('dashboard/', RedirectView.as_view(url='/owner/dashboard/')),
+    path('customer/', RedirectView.as_view(url='/owner/dashboard/')),
+    path('admin-panel/', RedirectView.as_view(url='/owner/dashboard/')),
+]

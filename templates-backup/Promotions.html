@@ -1,0 +1,239 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promotions - ZamReach</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar { background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%); }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar w-64 text-white p-6">
+            <div class="flex items-center mb-8">
+                <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
+                    <i class="fas fa-chart-network text-white"></i>
+                </div>
+                <h1 class="text-2xl font-bold">ZamReach</h1>
+            </div>
+            <p class="text-gray-400 mb-8 text-sm">Promotion Campaign Manager</p>
+            
+                        <nav>
+                <h2 class="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-4">Home</h2>
+                <ul class="space-y-2">
+                    <li><a href="/" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-tachometer-alt mr-3"></i> Dashboard</a></li>
+                    <li><a href="/map/" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-map-marked-alt mr-3"></i> Map</a></li>
+                    <li><a href="/analytics/" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-chart-line mr-3"></i> Analytics</a></li>
+                    <li><a href="/promotions/" class="flex items-center p-3 bg-gray-700 rounded-lg transition"><i class="fas fa-bullhorn mr-3"></i> Promotions</a></li>
+                    <li><a href="/profile/" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-user-circle mr-3"></i> Profile</a></li>
+                </ul>
+            </nav>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto p-8">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Promotion Campaigns</h1>
+                    <p class="text-gray-600">Create and manage marketing campaigns</p>
+                </div>
+                <button id="new-promotion-btn" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:opacity-90">
+                    <i class="fas fa-plus mr-2"></i>New Promotion
+                </button>
+            </div>
+            
+            <!-- Active Promotions -->
+            <div class="mb-8">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Active Promotions (24)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Promotion 1 -->
+                    <div class="bg-white rounded-xl shadow p-6 border-l-4 border-blue-500">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="font-bold text-lg">Summer Sale 2026</h3>
+                            <span class="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">Active</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">20% off all products until January 31</p>
+                        <div class="flex justify-between text-sm text-gray-500 mb-4">
+                            <span><i class="fas fa-calendar mr-1"></i>Ends: Jan 31</span>
+                            <span><i class="fas fa-users mr-1"></i>1,245 reached</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Edit</button>
+                            <button class="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Pause</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Promotion 2 -->
+                    <div class="bg-white rounded-xl shadow p-6 border-l-4 border-green-500">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="font-bold text-lg">New Customer Discount</h3>
+                            <span class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">High Impact</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">15% discount for first-time customers</p>
+                        <div class="flex justify-between text-sm text-gray-500 mb-4">
+                            <span><i class="fas fa-calendar mr-1"></i>Ongoing</span>
+                            <span><i class="fas fa-users mr-1"></i>342 conversions</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Edit</button>
+                            <button class="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Stats</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Promotion 3 -->
+                    <div class="bg-white rounded-xl shadow p-6 border-l-4 border-yellow-500">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="font-bold text-lg">Referral Program</h3>
+                            <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm rounded-full">Expiring</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Get $10 credit for each friend referral</p>
+                        <div class="flex justify-between text-sm text-gray-500 mb-4">
+                            <span><i class="fas fa-calendar mr-1"></i>Ends: Jan 15</span>
+                            <span><i class="fas fa-users mr-1"></i>89 referrals</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Extend</button>
+                            <button class="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">View</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Create New Promotion Form (Hidden by default) -->
+            <div id="new-promotion-form" class="hidden bg-white rounded-xl shadow p-6 mb-8">
+                <h2 class="text-xl font-bold text-gray-800 mb-6">Create New Promotion</h2>
+                <form id="promotion-form">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Promotion Name</label>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-2" placeholder="e.g., Winter Sale 2026" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Type</label>
+                            <select class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                                <option>Percentage Discount</option>
+                                <option>Fixed Amount</option>
+                                <option>Free Shipping</option>
+                                <option>Buy One Get One</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                            <input type="date" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                            <input type="date" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                            <textarea class="w-full border border-gray-300 rounded-lg px-4 py-2 h-32" placeholder="Describe your promotion..."></textarea>
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-4">
+                        <button type="button" id="cancel-btn" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">Cancel</button>
+                        <button type="submit" class="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:opacity-90">
+                            <i class="fas fa-rocket mr-2"></i>Launch Promotion
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Past Promotions -->
+            <div>
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Past Promotions</h2>
+                <div class="bg-white rounded-xl shadow overflow-hidden">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Name</th>
+                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Period</th>
+                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Reach</th>
+                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Conversions</th>
+                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">ROI</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">Black Friday Sale</td>
+                                <td class="px-6 py-4">Nov 24-30, 2025</td>
+                                <td class="px-6 py-4">8,245</td>
+                                <td class="px-6 py-4">1,234</td>
+                                <td class="px-6 py-4 text-green-600 font-medium">42.5%</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">Holiday Season</td>
+                                <td class="px-6 py-4">Dec 1-31, 2025</td>
+                                <td class="px-6 py-4">12,450</td>
+                                <td class="px-6 py-4">2,145</td>
+                                <td class="px-6 py-4 text-green-600 font-medium">38.2%</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">Back to School</td>
+                                <td class="px-6 py-4">Aug 15-30, 2025</td>
+                                <td class="px-6 py-4">5,620</td>
+                                <td class="px-6 py-4">890</td>
+                                <td class="px-6 py-4 text-green-600 font-medium">31.8%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const newPromotionBtn = document.getElementById('new-promotion-btn');
+            const newPromotionForm = document.getElementById('new-promotion-form');
+            const cancelBtn = document.getElementById('cancel-btn');
+            const promotionForm = document.getElementById('promotion-form');
+            
+            // Show/Hide new promotion form
+            newPromotionBtn.addEventListener('click', function() {
+                newPromotionForm.classList.remove('hidden');
+                newPromotionBtn.classList.add('hidden');
+            });
+            
+            cancelBtn.addEventListener('click', function() {
+                newPromotionForm.classList.add('hidden');
+                newPromotionBtn.classList.remove('hidden');
+            });
+            
+            // Handle form submission
+            promotionForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Promotion created successfully! It will appear in Active Promotions.');
+                newPromotionForm.classList.add('hidden');
+                newPromotionBtn.classList.remove('hidden');
+                promotionForm.reset();
+            });
+            
+            // Promotion card buttons
+            document.querySelectorAll('.bg-white.rounded-xl.shadow button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const promotionName = this.closest('.bg-white').querySelector('h3').textContent;
+                    if (this.textContent.includes('Edit')) {
+                        alert(`Editing: ${promotionName}`);
+                    } else if (this.textContent.includes('Pause')) {
+                        alert(`Pausing: ${promotionName}`);
+                    } else if (this.textContent.includes('Stats')) {
+                        alert(`Showing stats for: ${promotionName}`);
+                    } else if (this.textContent.includes('Extend')) {
+                        alert(`Extending: ${promotionName}`);
+                    } else if (this.textContent.includes('View')) {
+                        alert(`Viewing details for: ${promotionName}`);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
+

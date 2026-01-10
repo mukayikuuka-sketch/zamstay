@@ -1,0 +1,23 @@
+﻿<!-- Add this to the bottom of your owner-dashboard.html before </body> -->
+<div class="fixed bottom-4 right-4 bg-white p-4 rounded-lg shadow-lg z-50">
+    <h4 class="font-bold mb-2">Test User Roles:</h4>
+    <div class="space-y-2">
+        <button onclick="switchRole('customer')" class="block w-full text-left px-3 py-2 bg-blue-100 hover:bg-blue-200 rounded">
+            👤 Customer View
+        </button>
+        <button onclick="switchRole('owner')" class="block w-full text-left px-3 py-2 bg-green-100 hover:bg-green-200 rounded">
+            🏢 Owner View
+        </button>
+        <button onclick="switchRole('admin')" class="block w-full text-left px-3 py-2 bg-purple-100 hover:bg-purple-200 rounded">
+             Admin View
+        </button>
+    </div>
+</div>
+
+<script>
+function switchRole(role) {
+    localStorage.setItem('userRole', role);
+    document.body.setAttribute('data-role', role);
+    alert(`Switched to ${role} view. Refresh to see navigation changes.`);
+}
+</script>

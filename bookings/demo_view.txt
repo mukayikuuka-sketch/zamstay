@@ -1,0 +1,4 @@
+﻿# Add this to your views.py
+def demo_dashboard(request):
+    """Demo dashboard showing all user roles"""
+    return render(request, 'owner-dashboard.html')

@@ -1,0 +1,1099 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZamStay - Hotel Booking Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Role-based visibility */
+        .customer-view, .owner-view, .admin-view {
+            display: none;
+        }
+        
+        [data-role="customer"] .customer-view,
+        [data-role="owner"] .owner-view,
+        [data-role="admin"] .admin-view {
+            display: block;
+        }
+        
+        [data-role="customer"] .customer-nav,
+        [data-role="owner"] .owner-nav,
+        [data-role="admin"] .admin-nav {
+            display: flex;
+        }
+        
+        .customer-nav, .owner-nav, .admin-nav {
+            display: none;
+        }
+        
+        /* Smooth transitions */
+        .role-transition {
+            transition: all 0.3s ease;
+        }
+        
+        /* ZamStay brand colors */
+        .zamstay-blue { color: #2563eb; }
+        .zamstay-green { color: #10b981; }
+        .zamstay-orange { color: #f59e0b; }
+        .zamstay-purple { color: #8b5cf6; }
+        
+        .bg-zamstay-blue { background-color: #2563eb; }
+        .bg-zamstay-green { background-color: #10b981; }
+        .bg-zamstay-orange { background-color: #f59e0b; }
+        .bg-zamstay-purple { background-color: #8b5cf6; }
+    </style>
+</head>
+<body class="bg-gray-50" data-role="customer">
+    <!-- TOP NAVIGATION BAR -->
+    <nav class="bg-white shadow-lg">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo and Brand -->
+                <div class="flex items-center space-x-8">
+                    <a href="#" class="text-2xl font-bold zamstay-blue">
+                        <i class="fas fa-hotel mr-2"></i>ZamStay
+                    </a>
+                    
+                    <!-- Customer Navigation -->
+                    <div class="customer-nav space-x-6">
+                        <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">
+                            <i class="fas fa-search mr-1"></i>Search
+                        </a>
+                        <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">
+                            <i class="fas fa-calendar mr-1"></i>My Bookings
+                        </a>
+                        <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">
+                            <i class="fas fa-heart mr-1"></i>Wishlist
+                        </a>
+                        <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">
+                            <i class="fas fa-question-circle mr-1"></i>Help
+                        </a>
+                    </div>
+                    
+                    <!-- Owner Navigation -->
+                    <div class="owner-nav space-x-6">
+                        <a href="#" class="zamstay-blue font-medium">
+                            <i class="fas fa-tachometer-alt mr-1"></i>Dashboard
+                        </a>
+                        <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">
+                            <i class="fas fa-home mr-1"></i>Properties
+                        </a>
+                        <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">
+                            <i class="fas fa-calendar mr-1"></i>Bookings
+                        </a>
+                        <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">
+                            <i class="fas fa-chart-line mr-1"></i>Analytics
+                        </a>
+                        <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">
+                            <i class="fas fa-wallet mr-1"></i>Finances
+                        </a>
+                    </div>
+                    
+                    <!-- Admin Navigation -->
+                    <div class="admin-nav space-x-6">
+                        <a href="#" class="zamstay-blue font-medium">
+                            <i class="fas fa-crown mr-1"></i>Admin
+                        </a>
+                        <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">
+                            <i class="fas fa-users mr-1"></i>Users
+                        </a>
+                        <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">
+                            <i class="fas fa-hotel mr-1"></i>Properties
+                        </a>
+                        <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">
+                            <i class="fas fa-chart-bar mr-1"></i>Reports
+                        </a>
+                        <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">
+                            <i class="fas fa-cog mr-1"></i>Settings
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- User Menu -->
+                <div class="flex items-center space-x-4">
+                    <!-- Current Role Display -->
+                    <div class="hidden md:flex items-center px-3 py-1 rounded-full bg-gray-100">
+                        <span id="current-role-badge" class="text-sm font-medium">
+                            <i class="fas fa-user mr-1"></i>Customer
+                        </span>
+                    </div>
+                    
+                    <!-- Notifications -->
+                    <button class="relative p-2 text-gray-600 hover:text-blue-600">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span class="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span>
+                    </button>
+                    
+                    <!-- User Avatar -->
+                    <div class="relative">
+                        <button onclick="toggleUserMenu()" class="flex items-center space-x-2 focus:outline-none">
+                            <div class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <span class="hidden md:inline text-sm font-medium">Demo User</span>
+                            <i class="fas fa-chevron-down text-sm text-gray-500"></i>
+                        </button>
+                        
+                        <!-- User Dropdown -->
+                        <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border py-2 z-50">
+                            <div class="px-4 py-2 border-b">
+                                <p class="font-medium">Demo User</p>
+                                <p class="text-sm text-gray-500" id="user-email">demo@zamstay.co.zm</p>
+                            </div>
+                            
+                            <a href="#" class="flex items-center px-4 py-2 text-gray-700 hover:bg-blue-50">
+                                <i class="fas fa-user-circle mr-3 text-blue-500"></i>
+                                Profile
+                            </a>
+                            <a href="#" class="flex items-center px-4 py-2 text-gray-700 hover:bg-blue-50">
+                                <i class="fas fa-cog mr-3 text-gray-500"></i>
+                                Settings
+                            </a>
+                            
+                            <div class="border-t my-2"></div>
+                            
+                            <div class="px-4 py-2">
+                                <p class="text-xs font-medium text-gray-500 mb-2">Switch View</p>
+                                <div class="space-y-1">
+                                    <button onclick="switchRole('customer')" class="w-full text-left px-2 py-1 text-sm rounded hover:bg-blue-50 text-blue-600">
+                                        <i class="fas fa-user mr-2"></i>Customer View
+                                    </button>
+                                    <button onclick="switchRole('owner')" class="w-full text-left px-2 py-1 text-sm rounded hover:bg-green-50 text-green-600">
+                                        <i class="fas fa-home mr-2"></i>Owner View
+                                    </button>
+                                    <button onclick="switchRole('admin')" class="w-full text-left px-2 py-1 text-sm rounded hover:bg-purple-50 text-purple-600">
+                                        <i class="fas fa-crown mr-2"></i>Admin View
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="border-t my-2"></div>
+                            
+                            <a href="#" class="flex items-center px-4 py-2 text-gray-700 hover:bg-red-50">
+                                <i class="fas fa-sign-out-alt mr-3 text-red-500"></i>
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <div class="container mx-auto px-4 py-6">
+        <!-- Welcome Header -->
+        <div class="mb-8 role-transition">
+            <h1 id="dashboard-title" class="text-3xl font-bold text-gray-800">Welcome to ZamStay!</h1>
+            <p id="dashboard-subtitle" class="text-gray-600 mt-2">Find your perfect stay in Zambia</p>
+        </div>
+
+        <!-- CUSTOMER VIEW -->
+        <div class="customer-view role-transition">
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Upcoming Stays</p>
+                            <div class="text-3xl font-bold mt-2 zamstay-blue">3</div>
+                            <p class="text-sm text-gray-500 mt-1">Next: Victoria Falls Hotel</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-blue-50">
+                            <i class="fas fa-calendar-check text-blue-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Saved Properties</p>
+                            <div class="text-3xl font-bold mt-2 zamstay-green">12</div>
+                            <p class="text-sm text-gray-500 mt-1">Hotels & Lodges</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-green-50">
+                            <i class="fas fa-heart text-green-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Total Bookings</p>
+                            <div class="text-3xl font-bold mt-2 zamstay-purple">24</div>
+                            <p class="text-sm text-gray-500 mt-1">All time</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-purple-50">
+                            <i class="fas fa-receipt text-purple-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Loyalty Points</p>
+                            <div class="text-3xl font-bold mt-2 zamstay-orange">1,250</div>
+                            <p class="text-sm text-gray-500 mt-1">Silver Member</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-orange-50">
+                            <i class="fas fa-gem text-orange-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Customer Content -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Upcoming Trips -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow">
+                        <div class="p-6 border-b">
+                            <h2 class="text-xl font-bold">Upcoming Trips</h2>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+                                    <div>
+                                        <h3 class="font-bold">Victoria Falls Hotel</h3>
+                                        <p class="text-sm text-gray-600">Livingstone, Zambia</p>
+                                        <p class="text-sm text-gray-500"><i class="far fa-calendar mr-1"></i>Jan 15-20, 2024  2 guests</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="font-bold text-lg">$450</div>
+                                        <span class="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">Confirmed</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <h3 class="font-bold">Lusaka Executive Suites</h3>
+                                        <p class="text-sm text-gray-600">Lusaka, Zambia</p>
+                                        <p class="text-sm text-gray-500"><i class="far fa-calendar mr-1"></i>Feb 1-3, 2024  1 guest</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="font-bold text-lg">$240</div>
+                                        <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">Pending</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button class="w-full mt-6 p-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-blue-500 hover:text-blue-500">
+                                <i class="fas fa-plus mr-2"></i>Book New Stay
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div>
+                    <div class="bg-white rounded-xl shadow mb-6">
+                        <div class="p-6 border-b">
+                            <h2 class="text-xl font-bold">Quick Actions</h2>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-3">
+                                <a href="#" class="flex items-center p-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100">
+                                    <i class="fas fa-search text-lg mr-4"></i>
+                                    <div>
+                                        <h3 class="font-medium">Search Stays</h3>
+                                        <p class="text-sm">Find hotels & lodges</p>
+                                    </div>
+                                </a>
+                                
+                                <a href="#" class="flex items-center p-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100">
+                                    <i class="fas fa-heart text-lg mr-4"></i>
+                                    <div>
+                                        <h3 class="font-medium">View Wishlist</h3>
+                                        <p class="text-sm">12 saved properties</p>
+                                    </div>
+                                </a>
+                                
+                                <a href="#" class="flex items-center p-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100">
+                                    <i class="fas fa-history text-lg mr-4"></i>
+                                    <div>
+                                        <h3 class="font-medium">Booking History</h3>
+                                        <p class="text-sm">Past 24 bookings</p>
+                                    </div>
+                                </a>
+                                
+                                <a href="#" class="flex items-center p-3 bg-orange-50 text-orange-700 rounded-lg hover:bg-orange-100">
+                                    <i class="fas fa-star text-lg mr-4"></i>
+                                    <div>
+                                        <h3 class="font-medium">Write Reviews</h3>
+                                        <p class="text-sm">2 pending reviews</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recommended for You -->
+                    <div class="bg-white rounded-xl shadow">
+                        <div class="p-4">
+                            <h3 class="font-bold mb-3">Recommended for You</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                    <img src="https://via.placeholder.com/60x40" alt="Hotel" class="w-12 h-12 object-cover rounded">
+                                    <div class="ml-3">
+                                        <h4 class="font-medium text-sm">Lake Safari Camp</h4>
+                                        <p class="text-xs text-gray-500">South Luangwa</p>
+                                        <p class="text-xs font-bold text-green-600">$180/night</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                    <img src="https://via.placeholder.com/60x40" alt="Hotel" class="w-12 h-12 object-cover rounded">
+                                    <div class="ml-3">
+                                        <h4 class="font-medium text-sm">Falls View Lodge</h4>
+                                        <p class="text-xs text-gray-500">Livingstone</p>
+                                        <p class="text-xs font-bold text-green-600">$220/night</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OWNER VIEW -->
+        <div class="owner-view role-transition">
+            <!-- Owner Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Total Revenue</p>
+                            <div class="text-3xl font-bold mt-2 zamstay-green">$12,450</div>
+                            <p class="text-sm text-green-500 mt-1"> 18% from last month</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-green-50">
+                            <i class="fas fa-dollar-sign text-green-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Occupancy Rate</p>
+                            <div class="text-3xl font-bold mt-2 zamstay-blue">78%</div>
+                            <p class="text-sm text-blue-500 mt-1"> 5% from last month</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-blue-50">
+                            <i class="fas fa-chart-line text-blue-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Active Bookings</p>
+                            <div class="text-3xl font-bold mt-2 zamstay-purple">8</div>
+                            <p class="text-sm text-gray-500 mt-1">3 pending confirmation</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-purple-50">
+                            <i class="fas fa-calendar-check text-purple-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Average Rating</p>
+                            <div class="text-3xl font-bold mt-2 zamstay-orange">4.8</div>
+                            <p class="text-sm text-gray-500 mt-1">Based on 124 reviews</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-orange-50">
+                            <i class="fas fa-star text-orange-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Owner Content -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Properties List -->
+                <div class="bg-white rounded-xl shadow">
+                    <div class="p-6 border-b flex justify-between items-center">
+                        <h2 class="text-xl font-bold">Your Properties</h2>
+                        <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                            <i class="fas fa-plus mr-2"></i>Add Property
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                <div class="flex items-center">
+                                    <img src="https://via.placeholder.com/50x50" alt="Property" class="w-12 h-12 object-cover rounded">
+                                    <div class="ml-4">
+                                        <h3 class="font-bold">Victoria Falls Hotel</h3>
+                                        <p class="text-sm text-gray-600">Livingstone  12 Rooms</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-bold text-green-600">$150/night</div>
+                                    <span class="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">Active</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                <div class="flex items-center">
+                                    <img src="https://via.placeholder.com/50x50" alt="Property" class="w-12 h-12 object-cover rounded">
+                                    <div class="ml-4">
+                                        <h3 class="font-bold">Lusaka Executive Suites</h3>
+                                        <p class="text-sm text-gray-600">Lusaka  8 Apartments</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-bold text-green-600">$120/night</div>
+                                    <span class="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">Active</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                <div class="flex items-center">
+                                    <img src="https://via.placeholder.com/50x50" alt="Property" class="w-12 h-12 object-cover rounded">
+                                    <div class="ml-4">
+                                        <h3 class="font-bold">South Luangwa Safari Camp</h3>
+                                        <p class="text-sm text-gray-600">South Luangwa  6 Tents</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-bold text-gray-400">$200/night</div>
+                                    <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">Draft</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Bookings & Quick Stats -->
+                <div class="space-y-8">
+                    <!-- Recent Bookings -->
+                    <div class="bg-white rounded-xl shadow">
+                        <div class="p-6 border-b">
+                            <h2 class="text-xl font-bold">Recent Bookings</h2>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between p-3 border-b">
+                                    <div>
+                                        <h4 class="font-medium">Sarah M.</h4>
+                                        <p class="text-sm text-gray-500">Victoria Falls Hotel  Jan 15-20</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="font-bold">$750</div>
+                                        <span class="text-xs text-green-600">Confirmed</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-3 border-b">
+                                    <div>
+                                        <h4 class="font-medium">James K.</h4>
+                                        <p class="text-sm text-gray-500">Lusaka Suites  Feb 1-3</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="font-bold">$240</div>
+                                        <span class="text-xs text-yellow-600">Pending</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-3">
+                                    <div>
+                                        <h4 class="font-medium">Emma L.</h4>
+                                        <p class="text-sm text-gray-500">Victoria Falls Hotel  Jan 25-27</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="font-bold">$300</div>
+                                        <span class="text-xs text-green-600">Confirmed</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-xl shadow">
+                        <div class="p-6">
+                            <h3 class="font-bold mb-4">Quick Actions</h3>
+                            <div class="grid grid-cols-2 gap-3">
+                                <a href="#" class="p-4 bg-blue-50 text-blue-700 rounded-lg text-center hover:bg-blue-100">
+                                    <i class="fas fa-calendar-alt text-xl mb-2"></i>
+                                    <p class="text-sm font-medium">Calendar</p>
+                                </a>
+                                
+                                <a href="#" class="p-4 bg-green-50 text-green-700 rounded-lg text-center hover:bg-green-100">
+                                    <i class="fas fa-chart-bar text-xl mb-2"></i>
+                                    <p class="text-sm font-medium">Analytics</p>
+                                </a>
+                                
+                                <a href="#" class="p-4 bg-purple-50 text-purple-700 rounded-lg text-center hover:bg-purple-100">
+                                    <i class="fas fa-star text-xl mb-2"></i>
+                                    <p class="text-sm font-medium">Reviews</p>
+                                </a>
+                                
+                                <a href="#" class="p-4 bg-orange-50 text-orange-700 rounded-lg text-center hover:bg-orange-100">
+                                    <i class="fas fa-wallet text-xl mb-2"></i>
+                                    <p class="text-sm font-medium">Payouts</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN VIEW -->
+        <div class="admin-view role-transition">
+            <!-- Admin Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Total Users</p>
+                            <div class="text-3xl font-bold mt-2 zamstay-blue">1,254</div>
+                            <p class="text-sm text-blue-500 mt-1"> 12% from last month</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-blue-50">
+                            <i class="fas fa-users text-blue-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Total Properties</p>
+                            <div class="text-3xl font-bold mt-2 zamstay-green">342</div>
+                            <p class="text-sm text-gray-500 mt-1">156 in Zambia</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-green-50">
+                            <i class="fas fa-hotel text-green-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Active Bookings</p>
+                            <div class="text-3xl font-bold mt-2 zamstay-purple">89</div>
+                            <p class="text-sm text-purple-500 mt-1">This week</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-purple-50">
+                            <i class="fas fa-calendar text-purple-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Platform Revenue</p>
+                            <div class="text-3xl font-bold mt-2 zamstay-orange">$45,230</div>
+                            <p class="text-sm text-orange-500 mt-1"> 23% this month</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-orange-50">
+                            <i class="fas fa-chart-bar text-orange-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Admin Content -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Platform Overview -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow mb-6">
+                        <div class="p-6 border-b">
+                            <h2 class="text-xl font-bold">Platform Overview</h2>
+                        </div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                                <div class="text-center p-4 bg-gray-50 rounded-lg">
+                                    <div class="text-2xl font-bold zamstay-blue">856</div>
+                                    <p class="text-sm text-gray-500">Customers</p>
+                                </div>
+                                <div class="text-center p-4 bg-gray-50 rounded-lg">
+                                    <div class="text-2xl font-bold zamstay-green">124</div>
+                                    <p class="text-sm text-gray-500">Property Owners</p>
+                                </div>
+                                <div class="text-center p-4 bg-gray-50 rounded-lg">
+                                    <div class="text-2xl font-bold zamstay-purple">274</div>
+                                    <p class="text-sm text-gray-500">Bookings This Month</p>
+                                </div>
+                                <div class="text-center p-4 bg-gray-50 rounded-lg">
+                                    <div class="text-2xl font-bold zamstay-orange">94%</div>
+                                    <p class="text-sm text-gray-500">Satisfaction Rate</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Recent Activity -->
+                            <div>
+                                <h3 class="font-bold mb-4">Recent Activity</h3>
+                                <div class="space-y-3">
+                                    <div class="flex items-center p-3 bg-blue-50 rounded-lg">
+                                        <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                            <i class="fas fa-user-plus text-blue-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium">New user registered</p>
+                                            <p class="text-xs text-gray-500">John Doe signed up as property owner</p>
+                                        </div>
+                                        <div class="ml-auto text-xs text-gray-500">2 min ago</div>
+                                    </div>
+                                    
+                                    <div class="flex items-center p-3 bg-green-50 rounded-lg">
+                                        <div class="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                                            <i class="fas fa-home text-green-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium">New property listed</p>
+                                            <p class="text-xs text-gray-500">"Lake Safari Camp" in South Luangwa</p>
+                                        </div>
+                                        <div class="ml-auto text-xs text-gray-500">15 min ago</div>
+                                    </div>
+                                    
+                                    <div class="flex items-center p-3 bg-purple-50 rounded-lg">
+                                        <div class="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
+                                            <i class="fas fa-calendar-check text-purple-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium">New booking made</p>
+                                            <p class="text-xs text-gray-500">$450 booking at Victoria Falls Hotel</p>
+                                        </div>
+                                        <div class="ml-auto text-xs text-gray-500">1 hour ago</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pending Actions -->
+                    <div class="bg-white rounded-xl shadow">
+                        <div class="p-6 border-b">
+                            <h2 class="text-xl font-bold">Pending Actions</h2>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between p-4 bg-yellow-50 rounded-lg">
+                                    <div>
+                                        <h3 class="font-bold">Property Verifications</h3>
+                                        <p class="text-sm text-gray-600">8 properties awaiting verification</p>
+                                    </div>
+                                    <button class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600">
+                                        Review
+                                    </button>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-4 bg-red-50 rounded-lg">
+                                    <div>
+                                        <h3 class="font-bold">User Reports</h3>
+                                        <p class="text-sm text-gray-600">3 user reports to investigate</p>
+                                    </div>
+                                    <button class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                                        Investigate
+                                    </button>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+                                    <div>
+                                        <h3 class="font-bold">Payment Issues</h3>
+                                        <p class="text-sm text-gray-600">2 failed payments to resolve</p>
+                                    </div>
+                                    <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                                        Resolve
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Admin Quick Actions -->
+                <div>
+                    <div class="bg-white rounded-xl shadow mb-6">
+                        <div class="p-6 border-b">
+                            <h2 class="text-xl font-bold">Admin Tools</h2>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-3">
+                                <a href="#" class="flex items-center p-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100">
+                                    <i class="fas fa-users-cog text-lg mr-4"></i>
+                                    <div>
+                                        <h3 class="font-medium">User Management</h3>
+                                        <p class="text-sm">Manage all platform users</p>
+                                    </div>
+                                </a>
+                                
+                                <a href="#" class="flex items-center p-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100">
+                                    <i class="fas fa-hotel text-lg mr-4"></i>
+                                    <div>
+                                        <h3 class="font-medium">Property Management</h3>
+                                        <p class="text-sm">Verify and manage properties</p>
+                                    </div>
+                                </a>
+                                
+                                <a href="#" class="flex items-center p-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100">
+                                    <i class="fas fa-chart-pie text-lg mr-4"></i>
+                                    <div>
+                                        <h3 class="font-medium">Analytics Dashboard</h3>
+                                        <p class="text-sm">View platform analytics</p>
+                                    </div>
+                                </a>
+                                
+                                <a href="#" class="flex items-center p-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100">
+                                    <i class="fas fa-cog text-lg mr-4"></i>
+                                    <div>
+                                        <h3 class="font-medium">Platform Settings</h3>
+                                        <p class="text-sm">Configure platform settings</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- System Status -->
+                    <div class="bg-white rounded-xl shadow">
+                        <div class="p-6">
+                            <h3 class="font-bold mb-4">System Status</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-sm">Server Load</span>
+                                        <span class="text-sm font-medium">42%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-green-500 h-2 rounded-full" style="width: 42%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-sm">Database</span>
+                                        <span class="text-sm text-green-600 font-medium">Online</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="h-2 w-2 rounded-full bg-green-500 mr-2"></div>
+                                        <span class="text-sm text-gray-600">All systems operational</span>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-sm">Payment Gateway</span>
+                                        <span class="text-sm text-green-600 font-medium">Active</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="h-2 w-2 rounded-full bg-green-500 mr-2"></div>
+                                        <span class="text-sm text-gray-600">MTN Money, Airtel Money, Cards</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DEMO CONTROLS FLOATING PANEL -->
+    <div class="fixed bottom-4 right-4 bg-white rounded-xl shadow-xl border z-50 w-80">
+        <div class="p-4 border-b bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-t-xl">
+            <div class="flex items-center justify-between">
+                <h3 class="font-bold">
+                    <i class="fas fa-eye mr-2"></i>Demo Mode
+                </h3>
+                <button onclick="toggleDemoPanel()" class="text-white hover:text-gray-200">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+            <p class="text-sm opacity-90 mt-1">Switch between different user roles</p>
+        </div>
+        
+        <div id="demo-panel-content" class="p-4">
+            <!-- Role Selector -->
+            <div class="mb-6">
+                <h4 class="font-bold text-gray-700 mb-3">Switch User Role</h4>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="switchRole('customer')" 
+                            class="role-btn p-3 rounded-lg border-2 border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100"
+                            data-role="customer">
+                        <i class="fas fa-user text-lg mb-2"></i>
+                        <div class="font-medium">Customer</div>
+                        <div class="text-xs text-gray-600">Booking stays</div>
+                    </button>
+                    
+                    <button onclick="switchRole('owner')" 
+                            class="role-btn p-3 rounded-lg border-2 border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100"
+                            data-role="owner">
+                        <i class="fas fa-home text-lg mb-2"></i>
+                        <div class="font-medium">Owner</div>
+                        <div class="text-xs text-gray-600">Managing properties</div>
+                    </button>
+                    
+                    <button onclick="switchRole('admin')" 
+                            class="role-btn p-3 rounded-lg border-2 border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100"
+                            data-role="admin">
+                        <i class="fas fa-crown text-lg mb-2"></i>
+                        <div class="font-medium">Admin</div>
+                        <div class="text-xs text-gray-600">Platform management</div>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Current Status -->
+            <div class="mb-6 p-3 bg-gray-50 rounded-lg">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-medium">Current Role:</span>
+                    <span id="current-role-display" class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                        Customer
+                    </span>
+                </div>
+                <div class="text-xs text-gray-600">
+                    You are viewing the platform as a <span id="role-description">customer booking accommodations</span>.
+                </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div>
+                <h4 class="font-bold text-gray-700 mb-3">Quick Stats</h4>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="text-center p-2 bg-blue-50 rounded">
+                        <div class="font-bold zamstay-blue" id="stat-users">1,254</div>
+                        <div class="text-xs text-gray-600">Total Users</div>
+                    </div>
+                    <div class="text-center p-2 bg-green-50 rounded">
+                        <div class="font-bold zamstay-green" id="stat-properties">342</div>
+                        <div class="text-xs text-gray-600">Properties</div>
+                    </div>
+                    <div class="text-center p-2 bg-purple-50 rounded">
+                        <div class="font-bold zamstay-purple" id="stat-bookings">89</div>
+                        <div class="text-xs text-gray-600">Active Bookings</div>
+                    </div>
+                    <div class="text-center p-2 bg-orange-50 rounded">
+                        <div class="font-bold zamstay-orange" id="stat-revenue">$45,230</div>
+                        <div class="text-xs text-gray-600">Revenue</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Demo Instructions -->
+            <div class="mt-4 pt-4 border-t">
+                <p class="text-xs text-gray-500">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    This is a demo view. In production, users will see only their assigned role.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION TOAST -->
+    <div id="notification-toast" 
+         class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300">
+        <div class="flex items-center">
+            <i class="fas fa-check-circle mr-3"></i>
+            <span id="notification-message">Switched to Customer view</span>
+        </div>
+    </div>
+
+    <script>
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedRole = localStorage.getItem('zamstay-demo-role') || 'customer';
+        switchRole(savedRole);
+        updateRoleButtons(savedRole);
+    });
+    
+    // Role switching function
+    function switchRole(role) {
+        // Save to localStorage
+        localStorage.setItem('zamstay-demo-role', role);
+        
+        // Update body attribute
+        document.body.setAttribute('data-role', role);
+        
+        // Update UI elements
+        updateDashboardTitle(role);
+        updateCurrentRoleDisplay(role);
+        updateRoleButtons(role);
+        updateDemoStats(role);
+        updateUserEmail(role);
+        
+        // Show notification
+        showNotification(`Switched to ${role} view`);
+        
+        // Close user dropdown if open
+        document.getElementById('user-dropdown').classList.add('hidden');
+    }
+    
+    // Update dashboard title based on role
+    function updateDashboardTitle(role) {
+        const titles = {
+            'customer': 'Welcome to ZamStay!',
+            'owner': 'Property Owner Dashboard',
+            'admin': 'Administrator Dashboard'
+        };
+        
+        const subtitles = {
+            'customer': 'Find your perfect stay in Zambia',
+            'owner': 'Manage your properties and bookings',
+            'admin': 'Platform overview and management'
+        };
+        
+        document.getElementById('dashboard-title').textContent = titles[role];
+        document.getElementById('dashboard-subtitle').textContent = subtitles[role];
+        
+        // Update page title
+        document.title = `${titles[role]} - ZamStay`;
+    }
+    
+    // Update current role display
+    function updateCurrentRoleDisplay(role) {
+        const roleNames = {
+            'customer': 'Customer',
+            'owner': 'Property Owner',
+            'admin': 'Administrator'
+        };
+        
+        const roleDescriptions = {
+            'customer': 'customer booking accommodations',
+            'owner': 'property owner managing listings',
+            'admin': 'administrator managing the platform'
+        };
+        
+        const roleColors = {
+            'customer': 'bg-blue-100 text-blue-800',
+            'owner': 'bg-green-100 text-green-800',
+            'admin': 'bg-purple-100 text-purple-800'
+        };
+        
+        // Update badge
+        const badge = document.getElementById('current-role-badge');
+        badge.innerHTML = `<i class="fas fa-${role === 'customer' ? 'user' : role === 'owner' ? 'home' : 'crown'} mr-1"></i>${roleNames[role]}`;
+        badge.className = 'text-sm font-medium ' + roleColors[role].split(' ')[1];
+        badge.parentElement.className = badge.parentElement.className.replace(/bg-\w+-\d+/, roleColors[role].split(' ')[0]);
+        
+        // Update demo panel display
+        document.getElementById('current-role-display').textContent = roleNames[role];
+        document.getElementById('current-role-display').className = `px-2 py-1 ${roleColors[role]} rounded-full text-xs font-medium`;
+        document.getElementById('role-description').textContent = roleDescriptions[role];
+    }
+    
+    // Update active role buttons
+    function updateRoleButtons(activeRole) {
+        document.querySelectorAll('.role-btn').forEach(btn => {
+            const role = btn.getAttribute('data-role');
+            
+            if (role === activeRole) {
+                // Active button styling
+                if (role === 'customer') {
+                    btn.className = 'role-btn p-3 rounded-lg border-2 border-blue-500 bg-blue-50 text-blue-700';
+                } else if (role === 'owner') {
+                    btn.className = 'role-btn p-3 rounded-lg border-2 border-green-500 bg-green-50 text-green-700';
+                } else {
+                    btn.className = 'role-btn p-3 rounded-lg border-2 border-purple-500 bg-purple-50 text-purple-700';
+                }
+            } else {
+                // Inactive button styling
+                btn.className = 'role-btn p-3 rounded-lg border-2 border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100';
+            }
+        });
+    }
+    
+    // Update demo stats based on role
+    function updateDemoStats(role) {
+        const stats = {
+            'customer': { users: '856', properties: '342', bookings: '24', revenue: '$12,450' },
+            'owner': { users: '1,254', properties: '3', bookings: '8', revenue: '$12,450' },
+            'admin': { users: '1,254', properties: '342', bookings: '89', revenue: '$45,230' }
+        };
+        
+        document.getElementById('stat-users').textContent = stats[role].users;
+        document.getElementById('stat-properties').textContent = stats[role].properties;
+        document.getElementById('stat-bookings').textContent = stats[role].bookings;
+        document.getElementById('stat-revenue').textContent = stats[role].revenue;
+    }
+    
+    // Update user email based on role
+    function updateUserEmail(role) {
+        const emails = {
+            'customer': 'customer@zamstay.co.zm',
+            'owner': 'owner@zamstay.co.zm',
+            'admin': 'admin@zamstay.co.zm'
+        };
+        document.getElementById('user-email').textContent = emails[role];
+    }
+    
+    // Show notification toast
+    function showNotification(message) {
+        const toast = document.getElementById('notification-toast');
+        const messageEl = document.getElementById('notification-message');
+        
+        messageEl.textContent = message;
+        toast.classList.remove('translate-x-full');
+        
+        setTimeout(() => {
+            toast.classList.add('translate-x-full');
+        }, 3000);
+    }
+    
+    // Toggle user dropdown
+    function toggleUserMenu() {
+        document.getElementById('user-dropdown').classList.toggle('hidden');
+    }
+    
+    // Toggle demo panel
+    function toggleDemoPanel() {
+        const content = document.getElementById('demo-panel-content');
+        const icon = document.querySelector('#demo-panel-content').parentElement.querySelector('.fa-chevron-down');
+        
+        if (content.style.display === 'none') {
+            content.style.display = 'block';
+            icon.classList.remove('fa-chevron-up');
+            icon.classList.add('fa-chevron-down');
+        } else {
+            content.style.display = 'none';
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-up');
+        }
+    }
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('user-dropdown');
+        const userMenu = document.querySelector('button[onclick="toggleUserMenu()"]');
+        
+        if (userMenu && !userMenu.contains(event.target) && dropdown && !dropdown.contains(event.target)) {
+            dropdown.classList.add('hidden');
+        }
+    });
+    
+    // Add keyboard shortcuts
+    document.addEventListener('keydown', function(event) {
+        // Ctrl+1 for Customer view
+        if (event.ctrlKey && event.key === '1') {
+            event.preventDefault();
+            switchRole('customer');
+        }
+        // Ctrl+2 for Owner view
+        else if (event.ctrlKey && event.key === '2') {
+            event.preventDefault();
+            switchRole('owner');
+        }
+        // Ctrl+3 for Admin view
+        else if (event.ctrlKey && event.key === '3') {
+            event.preventDefault();
+            switchRole('admin');
+        }
+    });
+    </script>
+</body>
+</html>

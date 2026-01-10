@@ -1,0 +1,626 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZamReach Dashboard</title>
+      <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    
+    <!-- CSS & Scripts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        .stat-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .sidebar { background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%); }
+        .chart-container { position: relative; height: 300px; width: 100%; }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar w-64 text-white p-6">
+            <div class="flex items-center mb-8">
+                <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
+                    <i class="fas fa-chart-network text-white"></i>
+                </div>
+                <h1 class="text-2xl font-bold">ZamReach</h1>
+            </div>
+            <p class="text-gray-400 mb-8 text-sm">Manage your business analytics and promotions</p>
+            
+            <nav>
+                <h2 class="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-4">Home</h2>
+                <ul class="space-y-2">
+                    <li><a href="/" class="flex items-center p-3 bg-gray-700 rounded-lg transition"><i class="fas fa-tachometer-alt mr-3"></i> Dashboard</a></li>
+                    <li><a href="/map/" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-map-marked-alt mr-3"></i> Map</a></li>
+                    <li><a href="/analytics/" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-chart-line mr-3"></i> Analytics</a></li>
+                    <li><a href="/promotions/" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-bullhorn mr-3"></i> Promotions</a></li>
+                    <li><a href="/profile/" class="flex items-center p-3 hover:bg-gray-700 rounded-lg transition"><i class="fas fa-user-circle mr-3"></i> Profile</a></li>
+                </ul>
+            </nav>
+            
+            <div class="mt-12 pt-8 border-t border-gray-700">
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-white"></i>
+                    </div>
+                    <div class="ml-3">
+                        <div class="font-semibold" id="user-name">Administrator</div>
+                        <div class="text-gray-400 text-sm" id="user-email">admin@zamreach.com</div>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <a href="/profile/" class="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded">
+                        <i class="fas fa-cog mr-2"></i>Settings
+                    </a>
+                    <a href="/accounts/logout/" class="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700 rounded">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <div class="p-8">
+                <!-- Header -->
+                <div class="mb-10">
+                    <h1 class="text-3xl font-bold text-gray-800">Welcome back, Admin!</h1>
+                    <p class="text-gray-600 mt-2">Here's what's happening with your business today.</p>
+                    <button id="refresh-btn" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                        <i class="fas fa-sync-alt mr-2"></i>Refresh Data
+                    </button>
+                    <button id="export-btn" class="mt-4 ml-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                        <i class="fas fa-download mr-2"></i>Export Report
+                    </button>
+                </div>
+                
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                    <div class="stat-card text-white p-6 rounded-xl shadow-lg transform hover:-translate-y-1 transition cursor-pointer" id="customers-card">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="text-2xl font-bold" id="total-customers">1,254</div>
+                                <div class="text-gray-200 text-sm mt-1">Total Customers</div>
+                            </div>
+                            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-users text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-green-300 text-sm">
+                            <i class="fas fa-arrow-up mr-1"></i> <span id="customers-growth">12%</span> from last month
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition cursor-pointer" id="revenue-card">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="text-2xl font-bold text-green-600" id="monthly-revenue">$45,230</div>
+                                <div class="text-gray-600 text-sm mt-1">Monthly Revenue</div>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-dollar-sign text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-green-600 text-sm font-medium">
+                            <i class="fas fa-chart-line mr-1"></i> <span id="revenue-growth">18.5%</span> increase
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition cursor-pointer" id="promotions-card">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="text-2xl font-bold text-blue-600" id="active-promotions">24</div>
+                                <div class="text-gray-600 text-sm mt-1">Active Promotions</div>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-bullhorn text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-blue-600 text-sm">
+                            <i class="fas fa-clock mr-1"></i> <span id="ending-soon">3</span> ending soon
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition cursor-pointer" id="map-views-card">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="text-2xl font-bold text-purple-600" id="map-views">3,456</div>
+                                <div class="text-gray-600 text-sm mt-1">Map Views</div>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-map-marked-alt text-purple-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-purple-600 text-sm">
+                            <i class="fas fa-eye mr-1"></i> <span id="today-views">245</span> today
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+                    <div class="bg-white rounded-xl shadow p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-6">Revenue Trend</h2>
+                        <div class="chart-container">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-6">Customer Growth</h2>
+                        <div class="chart-container">
+                            <canvas id="customersChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Activities -->
+                <div class="bg-white rounded-xl shadow p-6 mb-10">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-gray-800">Recent Activities</h2>
+                        <button id="load-more-activities" class="text-purple-600 hover:text-purple-800 text-sm font-medium">
+                            <i class="fas fa-plus mr-1"></i>Load More
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-4" id="activities-list">
+                        <!-- Activities loaded dynamically -->
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-gradient-to-r from-cyan-500 to-blue-500 text-white p-6 rounded-xl">
+                        <h3 class="font-bold text-lg mb-3">Quick Analytics</h3>
+                        <p class="text-cyan-100 mb-4">View detailed reports and insights</p>
+                        <button id="view-reports-btn" class="bg-white text-cyan-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+                            <i class="fas fa-chart-bar mr-2"></i>View Reports
+                        </button>
+                    </div>
+                    <div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6 rounded-xl">
+                        <h3 class="font-bold text-lg mb-3">Create Promotion</h3>
+                        <p class="text-purple-100 mb-4">Launch a new marketing campaign</p>
+                        <button id="create-promotion-btn" class="bg-white text-purple-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+                            <i class="fas fa-plus-circle mr-2"></i>Start Campaign
+                        </button>
+                    </div>
+                    <div class="bg-gradient-to-r from-green-500 to-emerald-500 text-white p-6 rounded-xl">
+                        <h3 class="font-bold text-lg mb-3">Map Overview</h3>
+                        <p class="text-green-100 mb-4">Explore geographic analytics</p>
+                        <button id="open-map-btn" class="bg-white text-green-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+                            <i class="fas fa-map mr-2"></i>Open Map
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification Container -->
+    <div id="notification-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+    
+    <!-- JavaScript Code -->
+    <script>
+        // ========== DASHBOARD DATA ==========
+        let dashboardData = {
+            stats: {
+                totalCustomers: 1254,
+                monthlyRevenue: 45230,
+                activePromotions: 24,
+                mapViews: 3456,
+                customersGrowth: 12,
+                revenueGrowth: 18.5,
+                endingSoon: 3,
+                todayViews: 245
+            },
+            activities: [
+                { type: 'new_customer', title: 'New customer registered', details: 'John Doe  johndoe@example.com', time: '10 min ago', icon: 'user-plus' },
+                { type: 'promotion', title: 'Promotion campaign launched', details: 'Madeleine Tyson  "Summer Sale 2026"', time: '25 min ago', icon: 'bullhorn' },
+                { type: 'location', title: 'New location added to map', details: 'Lusaka Central  Copperbelt Region', time: '1 hour ago', icon: 'map-marker-alt' },
+                { type: 'payment', title: 'Monthly subscription renewed', details: 'Business Plus Plan  $299.99', time: '2 hours ago', icon: 'credit-card' },
+                { type: 'support', title: 'Support ticket resolved', details: 'Ticket #4582  Login issue fixed', time: '3 hours ago', icon: 'headset' }
+            ],
+            revenueData: [32000, 38000, 42000, 45230, 48000, 52000, 55000],
+            customersData: [980, 1050, 1120, 1254, 1350, 1420, 1500],
+            months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul']
+        };
+        
+        // ========== NOTIFICATION SYSTEM ==========
+        function showNotification(message, type = 'info', duration = 3000) {
+            const container = document.getElementById('notification-container');
+            const notification = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-green-600' : 
+                           type === 'error' ? 'bg-red-600' : 
+                           type === 'warning' ? 'bg-yellow-600' : 'bg-blue-600';
+            
+            notification.className = `${bgColor} text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 translate-x-64`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'} mr-3"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            container.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-64');
+                notification.classList.add('translate-x-0');
+            }, 10);
+            
+            // Auto remove
+            setTimeout(() => {
+                notification.classList.remove('translate-x-0');
+                notification.classList.add('translate-x-64');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 300);
+            }, duration);
+        }
+        
+        // ========== ANIMATION FUNCTIONS ==========
+        function animateCounter(elementId, finalValue, prefix = '', suffix = '') {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            const currentText = element.textContent;
+            const current = parseFloat(currentText.replace(/[^\d.]/g, '')) || 0;
+            const duration = 1000;
+            const steps = 60;
+            const stepTime = duration / steps;
+            const increment = (finalValue - current) / steps;
+            
+            let currentValue = current;
+            let step = 0;
+            
+            const timer = setInterval(() => {
+                currentValue += increment;
+                step++;
+                
+                if (step >= steps) {
+                    currentValue = finalValue;
+                    clearInterval(timer);
+                }
+                
+                if (prefix === '$') {
+                    element.textContent = `$${Math.floor(currentValue).toLocaleString()}`;
+                } else {
+                    element.textContent = prefix + Math.floor(currentValue).toLocaleString() + suffix;
+                }
+            }, stepTime);
+        }
+        
+        function animateGrowth(elementId, finalValue, suffix = '%') {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            const current = parseFloat(element.textContent) || 0;
+            const duration = 800;
+            const steps = 40;
+            const stepTime = duration / steps;
+            const increment = (finalValue - current) / steps;
+            
+            let currentValue = current;
+            let step = 0;
+            
+            const timer = setInterval(() => {
+                currentValue += increment;
+                step++;
+                
+                if (step >= steps) {
+                    currentValue = finalValue;
+                    clearInterval(timer);
+                }
+                
+                element.textContent = currentValue.toFixed(1) + suffix;
+            }, stepTime);
+        }
+        
+        // ========== CHART FUNCTIONS ==========
+        let revenueChart, customersChart;
+        
+        function initCharts() {
+            // Revenue Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            revenueChart = new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: dashboardData.months,
+                    datasets: [{
+                        label: 'Monthly Revenue',
+                        data: dashboardData.revenueData,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            grid: { color: 'rgba(0,0,0,0.05)' },
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        },
+                        x: {
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        }
+                    }
+                }
+            });
+            
+            // Customers Chart
+            const customersCtx = document.getElementById('customersChart').getContext('2d');
+            customersChart = new Chart(customersCtx, {
+                type: 'bar',
+                data: {
+                    labels: dashboardData.months,
+                    datasets: [{
+                        label: 'Total Customers',
+                        data: dashboardData.customersData,
+                        backgroundColor: 'rgba(102, 126, 234, 0.7)',
+                        borderColor: '#667eea',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.05)' },
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString();
+                                }
+                            }
+                        },
+                        x: {
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // ========== DATA LOADING FUNCTIONS ==========
+        function loadActivities() {
+            const container = document.getElementById('activities-list');
+            container.innerHTML = '';
+            
+            dashboardData.activities.forEach(activity => {
+                const bgColor = activity.type === 'new_customer' ? 'bg-green-100 text-green-600' :
+                              activity.type === 'promotion' ? 'bg-blue-100 text-blue-600' :
+                              activity.type === 'location' ? 'bg-yellow-100 text-yellow-600' :
+                              activity.type === 'payment' ? 'bg-purple-100 text-purple-600' :
+                              'bg-gray-100 text-gray-600';
+                
+                const activityEl = document.createElement('div');
+                activityEl.className = 'flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg transition group cursor-pointer';
+                activityEl.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 ${bgColor} rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-${activity.icon}"></i>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-gray-800">${activity.title}</div>
+                            <div class="text-gray-600 text-sm">${activity.details}</div>
+                        </div>
+                    </div>
+                    <div class="text-gray-500 text-sm">
+                        <span class="inline-block px-3 py-1 bg-gray-100 rounded-full">${activity.time}</span>
+                    </div>
+                `;
+                
+                activityEl.addEventListener('click', () => {
+                    showNotification(`Activity: ${activity.title} - ${activity.details}`, 'info');
+                });
+                
+                container.appendChild(activityEl);
+            });
+        }
+        
+        function updateStats() {
+            // Update main stats
+            animateCounter('total-customers', dashboardData.stats.totalCustomers);
+            animateCounter('monthly-revenue', dashboardData.stats.monthlyRevenue, '$');
+            animateCounter('active-promotions', dashboardData.stats.activePromotions);
+            animateCounter('map-views', dashboardData.stats.mapViews);
+            
+            // Update growth indicators
+            animateGrowth('customers-growth', dashboardData.stats.customersGrowth, '%');
+            animateGrowth('revenue-growth', dashboardData.stats.revenueGrowth, '%');
+            
+            // Update other indicators
+            document.getElementById('ending-soon').textContent = dashboardData.stats.endingSoon;
+            document.getElementById('today-views').textContent = dashboardData.stats.todayViews;
+        }
+        
+        function refreshDashboardData() {
+            // Simulate API call
+            showNotification('Fetching latest data...', 'info', 1000);
+            
+            setTimeout(() => {
+                // Generate new random data
+                dashboardData.stats.totalCustomers += Math.floor(Math.random() * 50) - 10;
+                dashboardData.stats.monthlyRevenue += Math.floor(Math.random() * 2000) - 500;
+                dashboardData.stats.activePromotions += Math.floor(Math.random() * 5) - 2;
+                dashboardData.stats.mapViews += Math.floor(Math.random() * 300) - 50;
+                dashboardData.stats.customersGrowth = 10 + Math.random() * 8;
+                dashboardData.stats.revenueGrowth = 15 + Math.random() * 10;
+                dashboardData.stats.endingSoon = Math.max(1, Math.floor(Math.random() * 6));
+                dashboardData.stats.todayViews = Math.floor(Math.random() * 500) + 100;
+                
+                // Update charts
+                const lastRevenue = dashboardData.revenueData[dashboardData.revenueData.length - 1];
+                const lastCustomers = dashboardData.customersData[dashboardData.customersData.length - 1];
+                
+                dashboardData.revenueData.push(lastRevenue + Math.floor(Math.random() * 5000) - 1000);
+                dashboardData.customersData.push(lastCustomers + Math.floor(Math.random() * 100) - 20);
+                dashboardData.months.push(['Aug', 'Sep', 'Oct', 'Nov', 'Dec'][dashboardData.revenueData.length - 8] || 'Month');
+                
+                // Keep only last 7 months
+                if (dashboardData.revenueData.length > 7) {
+                    dashboardData.revenueData.shift();
+                    dashboardData.customersData.shift();
+                    dashboardData.months.shift();
+                }
+                
+                // Update everything
+                updateStats();
+                
+                revenueChart.data.datasets[0].data = dashboardData.revenueData;
+                revenueChart.data.labels = dashboardData.months;
+                revenueChart.update();
+                
+                customersChart.data.datasets[0].data = dashboardData.customersData;
+                customersChart.data.labels = dashboardData.months;
+                customersChart.update();
+                
+                // Add new activity
+                const activities = [
+                    'New customer registration',
+                    'Promotion campaign update',
+                    'Map location added',
+                    'Payment processed',
+                    'Support request resolved',
+                    'System maintenance completed'
+                ];
+                const newActivity = activities[Math.floor(Math.random() * activities.length)];
+                
+                dashboardData.activities.unshift({
+                    type: 'update',
+                    title: 'Data refresh completed',
+                    details: newActivity,
+                    time: 'Just now',
+                    icon: 'sync'
+                });
+                
+                // Keep only last 5 activities
+                if (dashboardData.activities.length > 5) {
+                    dashboardData.activities.pop();
+                }
+                
+                loadActivities();
+                
+                showNotification('Dashboard data refreshed successfully!', 'success');
+            }, 1500);
+        }
+        
+        // ========== EVENT LISTENERS ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('ZamReach Dashboard loaded!');
+            
+            // Initialize
+            updateStats();
+            initCharts();
+            loadActivities();
+            
+            // Card click events
+            document.getElementById('customers-card').addEventListener('click', () => {
+                showNotification('Viewing customer analytics. Total: ' + dashboardData.stats.totalCustomers.toLocaleString(), 'info');
+            });
+            
+            document.getElementById('revenue-card').addEventListener('click', () => {
+                showNotification('Monthly revenue: $' + dashboardData.stats.monthlyRevenue.toLocaleString(), 'info');
+            });
+            
+            document.getElementById('promotions-card').addEventListener('click', () => {
+                showNotification(dashboardData.stats.activePromotions + ' active promotions', 'info');
+            });
+            
+            document.getElementById('map-views-card').addEventListener('click', () => {
+                showNotification('Map views: ' + dashboardData.stats.mapViews.toLocaleString(), 'info');
+            });
+            
+            // Button events
+            document.getElementById('refresh-btn').addEventListener('click', refreshDashboardData);
+            
+            document.getElementById('export-btn').addEventListener('click', () => {
+                showNotification('Exporting dashboard report...', 'info', 2000);
+                setTimeout(() => {
+                    showNotification('Report exported successfully!', 'success');
+                }, 2000);
+            });
+            
+            document.getElementById('load-more-activities').addEventListener('click', () => {
+                showNotification('Loading more activities...', 'info');
+                setTimeout(() => {
+                    showNotification('5 more activities loaded', 'success');
+                }, 1000);
+            });
+            
+            document.getElementById('view-reports-btn').addEventListener('click', () => {
+                showNotification('Opening detailed analytics reports...', 'info', 2000);
+                setTimeout(() => {
+                    showNotification('Reports generated successfully!', 'success');
+                }, 2000);
+            });
+            
+            document.getElementById('create-promotion-btn').addEventListener('click', () => {
+                showNotification('Opening promotion creation wizard...', 'info', 2000);
+                setTimeout(() => {
+                    showNotification('Promotion campaign created!', 'success');
+                }, 2000);
+            });
+            
+            document.getElementById('open-map-btn').addEventListener('click', () => {
+                window.location.href = '/map';
+            });
+            
+            // Welcome notification
+            setTimeout(() => {
+                showNotification('Welcome to ZamReach Dashboard!', 'success');
+            }, 500);
+        });
+    </script>
+
+
+    <!-- ZamStay Floating Button -->
+    <a href="/guest/" id="zamstay-floating-btn" class="fixed bottom-6 right-6 z-50 flex items-center px-5 py-3 rounded-full shadow-lg text-white font-semibold transition-transform hover:-translate-y-1" style="background: linear-gradient(135deg, #3498db, #2c3e50);">
+        <i class="fas fa-home mr-2"></i>
+        <span>ZamStay</span>
+    </a>
+    
+    <style>
+    #zamstay-floating-btn {
+        box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+    }
+    #zamstay-floating-btn:hover {
+        box-shadow: 0 8px 25px rgba(52, 152, 219, 0.6);
+    }
+    @media (max-width: 768px) {
+        #zamstay-floating-btn span {
+            display: none;
+        }
+        #zamstay-floating-btn {
+            padding: 12px;
+        }
+    }
+    </style></body>
+</html>
+
+
+
+
+
+
