@@ -1,11 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+        <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+<script>
+  if (typeof tailwind === "undefined") {
+    console.log("Tailwind CDN failed, using basic styles");
+    document.head.insertAdjacentHTML("beforeend", "<style>body { font-family: Arial, sans-serif; }</style>");
+  }
+</script>
+    {% load static %}
+<link rel="stylesheet" href="{% static 'fontawesomefree/css/all.min.css' %}">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZamStay - Book Hotels & Lodges in Zambia</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<script>
+  if (typeof tailwind === "undefined") {
+    console.log("Tailwind CDN failed, using basic styles");
+    document.head.insertAdjacentHTML("beforeend", "<style>body { font-family: Arial, sans-serif; }</style>");
+  }
+</script>
+<script>
+  // Fallback if Tailwind CDN fails
+  if (typeof tailwind === 'undefined') {
+    console.log('Tailwind CDN failed, using basic styles');
+    document.head.insertAdjacentHTML('beforeend', '<style>body { font-family: Arial, sans-serif; }</style>');
+  }
+</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" 
+      onerror="this.onerror=null;this.href=`/static/fontawesome/css/all.min.css`;">
     <style>
         .category-active {
             background-color: #2563eb !important;
@@ -462,3 +491,6 @@
     </script>
 </body>
 </html>
+
+
+
