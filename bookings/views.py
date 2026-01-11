@@ -127,3 +127,25 @@ def demo_dashboard(request):
     """Demo dashboard for stakeholders"""
     return render(request, 'unified_dashboard.html')
 
+
+def check_homepage(request):
+    """Test if homepage template renders correctly"""
+    try:
+        # Try to render the template
+        from django.template.loader import render_to_string
+        html = render_to_string('customer/home.html', {})
+        return HttpResponse(f'''
+            <h1>✅ Homepage Template Test</h1>
+            <p>Template renders successfully!</p>
+            <p>HTML length: {len(html)} characters</p>
+            <hr>
+            <p><a href="/">Back to Homepage</a></p>
+        ''')
+    except Exception as e:
+        return HttpResponse(f'''
+            <h1>❌ Homepage Template Error</h1>
+            <p><strong>Error:</strong> {str(e)}</p>
+            <p><strong>Type:</strong> {type(e).__name__}</p>
+            <hr>
+            <p><a href="/bookings/demo/">Try Demo Page</a></p>
+        ''')

@@ -1,7 +1,8 @@
-﻿from django.urls import path
+from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('check-homepage/', views.check_homepage, name='check_homepage'),
     # DEMO URL - for showing stakeholders
     path('demo/', views.demo_dashboard, name='demo_dashboard'),
     
@@ -30,5 +31,6 @@ urlpatterns = [
     path('admin/users/', views.admin_users, name='admin_users'),
     path('admin/properties/', views.admin_properties, name='admin_properties'),
 ]
+
 
 

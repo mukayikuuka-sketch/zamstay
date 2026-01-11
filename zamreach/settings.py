@@ -13,6 +13,7 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
+    'fontawesomefree',
     'bookings.apps.BookingsConfig',
     # Django core apps
     'django.contrib.admin',
@@ -119,6 +120,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Custom middleware
+
 
 
 
